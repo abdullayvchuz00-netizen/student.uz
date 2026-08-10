@@ -143,7 +143,7 @@ button {
   display: none;  
 }  
 </style>  </head>  <body>  <header>  
-  <h1>🎓 StudentUZ</h1>  
+  <h1>🎓 Student.uz</h1>  
   <p>O‘quvchilar uchun platforma</p>  
 </header>  <div class="container">    <div id="dashboard">  <div class="card">  
 
@@ -168,7 +168,9 @@ button {
   <p id="addMessage"></p>  
 
 </div>  
-
+<button id="reportButton">
+  📊 Hisobotlar
+</button>
 
 <div class="card">  
 
@@ -267,7 +269,11 @@ let selectedStudentId = null;
 // ELEMENTLAR  
 const addButton =  
   document.getElementById("addButton");  
-  
+  const reportButton =
+  document.getElementById("reportButton");
+  reportButton.addEventListener("click", function() {
+  alert("📊 Oylik hisobot bo‘limi");
+});
 const backButton =  
   document.getElementById("backButton");  
   
