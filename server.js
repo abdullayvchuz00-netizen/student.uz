@@ -4,142 +4,134 @@ const app = express();
 
 let students = [];
 
-// Bosh sahifa
 app.get("/", (req, res) => {
   res.send(`
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>StudentUZ</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<title>StudentUZ</title>
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f1f5f9;
-      color: #0f172a;
-    }
+<style>
+* {
+  box-sizing: border-box;
+}
 
-    header {
-      background: #2563eb;
-      color: white;
-      text-align: center;
-      padding: 25px;
-    }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f1f5f9;
+  color: #0f172a;
+}
 
-    header h1 {
-      margin: 0 0 8px;
-    }
+header {
+  background: #2563eb;
+  color: white;
+  text-align: center;
+  padding: 25px;
+}
 
-    .container {
-      max-width: 1000px;
-      margin: 25px auto;
-      padding: 15px;
-    }
+.container {
+  max-width: 1000px;
+  margin: 25px auto;
+  padding: 15px;
+}
 
-    .card {
-      background: white;
-      padding: 20px;
-      margin-bottom: 20px;
-      border-radius: 16px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-    }
+.card {
+  background: white;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0,0,0,.08);
+}
 
-    input {
-      width: 100%;
-      padding: 13px;
-      margin: 6px 0;
-      border: 1px solid #cbd5e1;
-      border-radius: 10px;
-      font-size: 16px;
-    }
+input {
+  width: 100%;
+  padding: 13px;
+  margin: 7px 0;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 16px;
+}
 
-    button {
-      border: none;
-      padding: 11px 16px;
-      margin: 5px 3px 0 0;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 15px;
-    }
+button {
+  border: 0;
+  padding: 12px 16px;
+  margin: 6px 4px 0 0;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 15px;
+}
 
-    .add {
-      background: #2563eb;
-      color: white;
-    }
+.add {
+  background: #2563eb;
+  color: white;
+}
 
-    .detail {
-      background: #dbeafe;
-      color: #1d4ed8;
-    }
+.detail {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
 
-    .edit {
-      background: #fef3c7;
-      color: #92400e;
-    }
+.edit {
+  background: #fef3c7;
+  color: #92400e;
+}
 
-    .delete {
-      background: #fee2e2;
-      color: #991b1b;
-    }
+.delete {
+  background: #fee2e2;
+  color: #991b1b;
+}
 
-    .save {
-      background: #dcfce7;
-      color: #166534;
-    }
+.save {
+  background: #dcfce7;
+  color: #166534;
+}
 
-    .back {
-      background: #e2e8f0;
-      color: #334155;
-    }
+.back {
+  background: #e2e8f0;
+}
 
-    .students {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 15px;
-    }
+.students {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit, minmax(260px, 1fr));
+  gap: 15px;
+}
 
-    .student {
-      background: #f8fafc;
-      padding: 20px;
-      border-radius: 15px;
-      border: 1px solid #e2e8f0;
-    }
+.student {
+  background: #f8fafc;
+  padding: 20px;
+  border-radius: 15px;
+  border: 1px solid #e2e8f0;
+}
 
-    .student h3 {
-      margin-top: 0;
-    }
+.debt {
+  color: #dc2626;
+  font-weight: bold;
+}
 
-    .debt {
-      color: #dc2626;
-      font-weight: bold;
-    }
+.paid {
+  color: #16a34a;
+  font-weight: bold;
+}
 
-    .paid {
-      color: #16a34a;
-      font-weight: bold;
-    }
+.success {
+  color: #16a34a;
+  font-weight: bold;
+}
 
-    .hidden {
-      display: none;
-    }
+.error {
+  color: #dc2626;
+  font-weight: bold;
+}
 
-    .success {
-      color: #16a34a;
-      font-weight: bold;
-    }
-
-    .error {
-      color: #dc2626;
-      font-weight: bold;
-    }
-  </style>
+.hidden {
+  display: none;
+}
+</style>
 </head>
 
 <body>
@@ -151,10 +143,10 @@ app.get("/", (req, res) => {
 
 <div class="container">
 
-  <!-- DASHBOARD -->
   <div id="dashboard">
 
     <div class="card">
+
       <h2>➕ O‘quvchi qo‘shish</h2>
 
       <input
@@ -169,29 +161,31 @@ app.get("/", (req, res) => {
         placeholder="Oylik to‘lov"
       >
 
-      <button class="add" onclick="addStudent()">
+      <button id="addButton" class="add">
         ➕ Qo‘shish
       </button>
 
       <p id="addMessage"></p>
+
     </div>
 
 
     <div class="card">
+
       <h2>👨‍🎓 O‘quvchilar</h2>
 
       <div id="studentsList" class="students"></div>
+
     </div>
 
   </div>
 
 
-  <!-- BATAFSIL -->
   <div id="details" class="hidden">
 
     <div class="card">
 
-      <button class="back" onclick="backToStudents()">
+      <button id="backButton" class="back">
         ← O‘quvchilar
       </button>
 
@@ -224,12 +218,12 @@ app.get("/", (req, res) => {
 
       <hr>
 
-      <h3>✏️ O‘quvchini tahrirlash</h3>
+      <h3>✏️ Tahrirlash</h3>
 
       <input
         id="editName"
         type="text"
-        placeholder="Ism"
+        placeholder="O‘quvchi ismi"
       >
 
       <input
@@ -238,7 +232,7 @@ app.get("/", (req, res) => {
         placeholder="Oylik to‘lov"
       >
 
-      <button class="save" onclick="saveStudent()">
+      <button id="saveButton" class="save">
         💾 Saqlash
       </button>
 
@@ -253,29 +247,62 @@ app.get("/", (req, res) => {
 
 <script>
 
+let students = [];
 let selectedStudentId = null;
 
 
-// O‘quvchi qo‘shish
-function addStudent() {
+// ELEMENTLAR
+const addButton =
+  document.getElementById("addButton");
+
+const backButton =
+  document.getElementById("backButton");
+
+const saveButton =
+  document.getElementById("saveButton");
+
+
+// O‘QUVCHI QO‘SHISH
+addButton.addEventListener("click", function() {
 
   const name =
-    document.getElementById("studentName").value.trim();
+    document
+      .getElementById("studentName")
+      .value
+      .trim();
 
   const fee =
-    Number(document.getElementById("studentFee").value);
+    Number(
+      document
+        .getElementById("studentFee")
+        .value
+    );
 
   const message =
     document.getElementById("addMessage");
 
-  if (name === "" || fee <= 0) {
+
+  if (name === "") {
 
     message.className = "error";
+
     message.textContent =
-      "❌ Ism va oylik to‘lovni kiriting.";
+      "❌ O‘quvchi ismini kiriting.";
 
     return;
   }
+
+
+  if (fee <= 0) {
+
+    message.className = "error";
+
+    message.textContent =
+      "❌ Oylik to‘lovni kiriting.";
+
+    return;
+  }
+
 
   const student = {
 
@@ -293,26 +320,38 @@ function addStudent() {
 
   };
 
+
   students.push(student);
 
-  document.getElementById("studentName").value = "";
-  document.getElementById("studentFee").value = "";
+
+  document
+    .getElementById("studentName")
+    .value = "";
+
+  document
+    .getElementById("studentFee")
+    .value = "";
+
 
   message.className = "success";
+
   message.textContent =
     "✅ " + name + " qo‘shildi!";
 
+
   renderStudents();
-}
+
+});
 
 
-// O‘quvchilar ro‘yxati
+// RO‘YXATNI CHIQARISH
 function renderStudents() {
 
   const list =
     document.getElementById("studentsList");
 
   list.innerHTML = "";
+
 
   if (students.length === 0) {
 
@@ -322,55 +361,133 @@ function renderStudents() {
     return;
   }
 
+
   students.forEach(function(student) {
 
     const debt =
-      Math.max(student.fee - student.paid, 0);
+      Math.max(
+        student.fee - student.paid,
+        0
+      );
+
 
     const card =
       document.createElement("div");
 
     card.className = "student";
 
-    card.innerHTML =
-      "<h3>👤 " +
-      escapeHtml(student.name) +
-      "</h3>" +
 
-      "<p>💰 Oylik: <strong>" +
+    const title =
+      document.createElement("h3");
+
+    title.textContent =
+      "👤 " + student.name;
+
+
+    const fee =
+      document.createElement("p");
+
+    fee.textContent =
+      "💰 Oylik: " +
       student.fee.toLocaleString() +
-      " so‘m</strong></p>" +
+      " so‘m";
 
-      "<p>🔴 Qarz: <strong class='debt'>" +
+
+    const debtText =
+      document.createElement("p");
+
+    debtText.innerHTML =
+      "🔴 Qarz: <strong class='debt'>" +
       debt.toLocaleString() +
-      " so‘m</strong></p>" +
+      " so‘m</strong>";
 
-      "<p>📅 Keldi: " +
+
+    const came =
+      document.createElement("p");
+
+    came.textContent =
+      "📅 Keldi: " +
       student.came +
-      " kun</p>" +
+      " kun";
 
-      "<p>❌ Kelmadi: " +
+
+    const absent =
+      document.createElement("p");
+
+    absent.textContent =
+      "❌ Kelmadi: " +
       student.absent +
-      " kun</p>" +
+      " kun";
 
-      "<button class='detail' onclick='showDetails(" +
-      student.id +
-      ")'>📋 Batafsil</button>" +
 
-      "<button class='edit' onclick='showDetails(" +
-      student.id +
-      ")'>✏️ Tahrirlash</button>" +
+    const detailButton =
+      document.createElement("button");
 
-      "<button class='delete' onclick='deleteStudent(" +
-      student.id +
-      ")'>🗑️ O‘chirish</button>";
+    detailButton.className = "detail";
+
+    detailButton.textContent =
+      "📋 Batafsil";
+
+
+    detailButton.addEventListener(
+      "click",
+      function() {
+        showDetails(student.id);
+      }
+    );
+
+
+    const editButton =
+      document.createElement("button");
+
+    editButton.className = "edit";
+
+    editButton.textContent =
+      "✏️ Tahrirlash";
+
+
+    editButton.addEventListener(
+      "click",
+      function() {
+        showDetails(student.id);
+      }
+    );
+
+
+    const deleteButton =
+      document.createElement("button");
+
+    deleteButton.className = "delete";
+
+    deleteButton.textContent =
+      "🗑️ O‘chirish";
+
+
+    deleteButton.addEventListener(
+      "click",
+      function() {
+        deleteStudent(student.id);
+      }
+    );
+
+
+    card.appendChild(title);
+    card.appendChild(fee);
+    card.appendChild(debtText);
+    card.appendChild(came);
+    card.appendChild(absent);
+    card.appendChild(detailButton);
+    card.appendChild(editButton);
+    card.appendChild(deleteButton);
+
 
     list.appendChild(card);
+
   });
 }
 
 
-// Batafsil sahifa
+// BATAFSIL
 function showDetails(id) {
 
   const student =
@@ -378,111 +495,161 @@ function showDetails(id) {
       return item.id === id;
     });
 
+
   if (!student) {
     return;
   }
 
+
   selectedStudentId = id;
+
 
   document
     .getElementById("dashboard")
     .classList.add("hidden");
 
+
   document
     .getElementById("details")
     .classList.remove("hidden");
 
+
   updateDetails(student);
+
 }
 
 
-// Batafsil ma’lumotni chiqarish
+// MA'LUMOTNI KO‘RSATISH
 function updateDetails(student) {
 
   const debt =
-    Math.max(student.fee - student.paid, 0);
+    Math.max(
+      student.fee - student.paid,
+      0
+    );
 
-  document.getElementById("detailName")
+
+  document
+    .getElementById("detailName")
     .textContent =
     "👤 " + student.name;
 
-  document.getElementById("detailFee")
-    .textContent =
-    student.fee.toLocaleString() + " so‘m";
 
-  document.getElementById("detailPaid")
+  document
+    .getElementById("detailFee")
     .textContent =
-    student.paid.toLocaleString() + " so‘m";
+    student.fee.toLocaleString() +
+    " so‘m";
 
-  document.getElementById("detailDebt")
+
+  document
+    .getElementById("detailPaid")
     .textContent =
-    debt.toLocaleString() + " so‘m";
+    student.paid.toLocaleString() +
+    " so‘m";
 
-  document.getElementById("detailCame")
+
+  document
+    .getElementById("detailDebt")
+    .textContent =
+    debt.toLocaleString() +
+    " so‘m";
+
+
+  document
+    .getElementById("detailCame")
     .textContent =
     student.came;
 
-  document.getElementById("detailAbsent")
+
+  document
+    .getElementById("detailAbsent")
     .textContent =
     student.absent;
 
-  document.getElementById("editName").value =
+
+  document
+    .getElementById("editName")
+    .value =
     student.name;
 
-  document.getElementById("editFee").value =
+
+  document
+    .getElementById("editFee")
+    .value =
     student.fee;
+
 }
 
 
-// Tahrirlashni saqlash
-function saveStudent() {
+// TAHRIRLASH
+saveButton.addEventListener(
+  "click",
+  function() {
 
-  const student =
-    students.find(function(item) {
-      return item.id === selectedStudentId;
-    });
+    const student =
+      students.find(function(item) {
+        return item.id === selectedStudentId;
+      });
 
-  if (!student) {
-    return;
-  }
 
-  const name =
-    document.getElementById("editName")
-      .value
-      .trim();
+    if (!student) {
+      return;
+    }
 
-  const fee =
-    Number(
-      document.getElementById("editFee").value
-    );
 
-  const message =
-    document.getElementById("editMessage");
+    const newName =
+      document
+        .getElementById("editName")
+        .value
+        .trim();
 
-  if (name === "" || fee <= 0) {
 
-    message.className = "error";
+    const newFee =
+      Number(
+        document
+          .getElementById("editFee")
+          .value
+      );
+
+
+    const message =
+      document.getElementById("editMessage");
+
+
+    if (
+      newName === "" ||
+      newFee <= 0
+    ) {
+
+      message.className = "error";
+
+      message.textContent =
+        "❌ Ma’lumotlarni to‘g‘ri kiriting.";
+
+      return;
+    }
+
+
+    student.name = newName;
+    student.fee = newFee;
+
+
+    updateDetails(student);
+
+    renderStudents();
+
+
+    message.className = "success";
 
     message.textContent =
-      "❌ Ma’lumotlarni to‘g‘ri kiriting.";
+      "✅ Ma’lumotlar saqlandi!";
 
-    return;
   }
-
-  student.name = name;
-  student.fee = fee;
-
-  updateDetails(student);
-  renderStudents();
-
-  message.className = "success";
-
-  message.textContent =
-    "✅ Ma’lumotlar saqlandi!";
-}
+);
 
 
-// O‘quvchini o‘chirish
+// O‘CHIRISH
 function deleteStudent(id) {
 
   const student =
@@ -490,54 +657,52 @@ function deleteStudent(id) {
       return item.id === id;
     });
 
+
   if (!student) {
     return;
   }
 
-  const result =
-    confirm(
+
+  if (
+    !confirm(
       student.name +
       "ni o‘chirishni xohlaysizmi?"
-    );
-
-  if (!result) {
+    )
+  ) {
     return;
   }
+
 
   students =
     students.filter(function(item) {
       return item.id !== id;
     });
 
+
   renderStudents();
+
 }
 
 
-// Orqaga qaytish
-function backToStudents() {
+// ORQAGA
+backButton.addEventListener(
+  "click",
+  function() {
 
-  document
-    .getElementById("details")
-    .classList.add("hidden");
-
-  document
-    .getElementById("dashboard")
-    .classList.remove("hidden");
-
-  selectedStudentId = null;
-}
+    document
+      .getElementById("details")
+      .classList.add("hidden");
 
 
-// Xavfsiz HTML
-function escapeHtml(text) {
+    document
+      .getElementById("dashboard")
+      .classList.remove("hidden");
 
-  return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
+
+    selectedStudentId = null;
+
+  }
+);
 
 
 renderStudents();
@@ -552,6 +717,7 @@ renderStudents();
 
 const PORT =
   process.env.PORT || 3000;
+
 
 app.listen(
   PORT,
