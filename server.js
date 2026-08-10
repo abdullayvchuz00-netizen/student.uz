@@ -93,6 +93,10 @@ button {
   background: #16a34a;
   color: white;
 }
+.debtAdd {
+  background: #dc2626;
+  color: white;
+}
 .back {
   background: #e2e8f0;
 }
@@ -234,7 +238,21 @@ button {
 
 <p id="paymentMessage"></p>
       <hr>
+<hr>
 
+<h3>🔴 Qarz qo‘yish</h3>
+
+<input
+  id="debtAmount"
+  type="number"
+  placeholder="Qarz summasi"
+>
+
+<button id="debtButton" class="debtAdd">
+  ➕ Qarz qo‘yish
+</button>
+
+<p id="debtMessage"></p>
       <h3>✏️ Tahrirlash</h3>
 
       <input
@@ -279,7 +297,8 @@ const saveButton =
   document.getElementById("saveButton");
 const payButton =
   document.getElementById("payButton");
-
+const debtButton =
+  document.getElementById("debtButton");
 // O‘QUVCHI QO‘SHISH
 addButton.addEventListener("click", function() {
 
@@ -763,6 +782,41 @@ payButton.addEventListener("click", function() {
   message.className = "success";
   message.textContent =
     "✅ " + amount.toLocaleString() + " so‘m to‘landi!";
+
+  updateDetails(student);
+  renderStudents();
+
+});
+debtButton.addEventListener("click", function() {
+
+  const student = students.find(function(item) {
+    return item.id === selectedStudentId;
+  });
+
+  if (!student) return;
+
+  const amount = Number(
+    document.getElementById("debtAmount").value
+  );
+
+  const message =
+    document.getElementById("debtMessage");
+
+  if (amount <= 0) {
+    message.className = "error";
+    message.textContent =
+      "❌ Qarz summasini kiriting.";
+    return;
+  }
+
+  student.debt += amount;
+
+  document.getElementById("debtAmount").value = "";
+
+  message.className = "success";
+  message.textContent =
+    "🔴 " + amount.toLocaleString() +
+    " so‘m qarz qo‘yildi!";
 
   updateDetails(student);
   renderStudents();
