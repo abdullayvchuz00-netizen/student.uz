@@ -257,7 +257,9 @@ button {
 
 <div id="welcomeScreen">
 
-  
+    <div class="welcomeLogo">
+  🎓
+</div>
 
   <h1>StudentUZ</h1>
 
@@ -268,10 +270,7 @@ button {
   <button id="enterButton">
     KIRISH
   </button>
-  <div class="welcomeLogo">
-  <img src="StudentUZ_logo__transparent.png" alt="StudentUZ">
-</div>
-</div>
+  
 
 <header>
   <h1>🎓 StudentUZ</h1> <header>  
