@@ -271,8 +271,9 @@ const addButton =
   document.getElementById("addButton");  
   const reportButton =
   document.getElementById("reportButton");
-  reportButton.addEventListener("click", function() {
-  alert("📊 Oylik hisobot bo‘limi");
+
+reportButton.addEventListener("click", function() {
+  window.location.href = "/reports";
 });
 const backButton =  
   document.getElementById("backButton");  
