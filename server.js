@@ -253,6 +253,9 @@ button {
     transform: translateY(0);
   }
 }
+#dashboard {
+  display: none;
+}
 </style>  </head>  <body> <div id="welcomeScreen">
 
     <div class="welcomeLogo">
