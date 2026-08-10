@@ -257,23 +257,26 @@ button {
 </style>  </head>  <body> <body>
 
 
+<h1>StudentUZ</h1>
 
-  <h1>StudentUZ</h1>
+<div class="logoLine"></div>
 
-  <div class="logoLine"></div>
+<p>O‘quvchilar platformasi</p>
 
-  <p>O‘quvchilar platformasi</p>
+<button id="enterButton">
+  KIRISH
+</button>
 
-  <button id="enterButton">
-    KIRISH
-  </button>
-  
+</div>
 
 <header>
-  <h1>🎓 StudentUZ</h1> <header>  
-  <h1>🎓 Student.uz</h1>  
-  <p>O‘quvchilar uchun platforma</p>  
-</header>  <div class="container">    <div id="dashboard">  <div class="card">  
+  <h1>🎓 Student.uz</h1>
+  <p>O‘quvchilar uchun platforma</p>
+</header>
+
+<div class="container">
+
+  <div id="dashboard">
 
   <h2>➕ O‘quvchi qo‘shish</h2>  
 
