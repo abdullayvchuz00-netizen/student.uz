@@ -101,6 +101,10 @@ button {
   background: #22c55e;
   color: white;
 }
+.absent {
+  background: #ef4444;
+  color: white;
+}
 .back {
   background: #e2e8f0;
 }
@@ -266,6 +270,9 @@ button {
 </button>
 
 <p id="attendanceMessage"></p>
+<button id="absentButton" class="absent">
+  ❌ Bugun kelmadi
+</button>
       <h3>✏️ Tahrirlash</h3>
 
       <input
@@ -314,6 +321,8 @@ const debtButton =
   document.getElementById("debtButton");
   const cameButton =
   document.getElementById("cameButton");
+  const absentButton =
+  document.getElementById("absentButton");
 // O‘QUVCHI QO‘SHISH
 addButton.addEventListener("click", function() {
 
@@ -853,6 +862,27 @@ cameButton.addEventListener("click", function() {
   message.className = "success";
   message.textContent =
     "✅ Bugun keldi deb belgilandi!";
+
+  updateDetails(student);
+  renderStudents();
+
+});
+absentButton.addEventListener("click", function() {
+
+  const student = students.find(function(item) {
+    return item.id === selectedStudentId;
+  });
+
+  if (!student) return;
+
+  const message =
+    document.getElementById("attendanceMessage");
+
+  student.absent++;
+
+  message.className = "error";
+  message.textContent =
+    "❌ Bugun kelmadi deb belgilandi!";
 
   updateDetails(student);
   renderStudents();
