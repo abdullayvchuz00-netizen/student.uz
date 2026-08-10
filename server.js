@@ -1,6 +1,7 @@
 const express = require("express");
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
@@ -10,35 +11,40 @@ let attendance = {};
 function today() {
   const d = new Date();
 
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-
-  return `${year}-${month}-${day}`;
+  return (
+    d.getFullYear() +
+    "-" +
+    String(d.getMonth() + 1).padStart(2, "0") +
+    "-" +
+    String(d.getDate()).padStart(2, "0")
+  );
 }
 
-function findStudent(id) {
-  return students.find((student) => student.id === Number(id));
+function getStudent(id) {
+  return students.find(
+    (student) => student.id === Number(id)
+  );
 }
 
 
 /* =========================
-   API: O‘QUVCHI QO‘SHISH
+   O‘QUVCHI QO‘SHISH
 ========================= */
 
 app.post("/api/students", (req, res) => {
-  const { name, fee } = req.body;
+  const name = String(req.body.name || "").trim();
+  const fee = Number(req.body.fee);
 
-  if (!name || !fee || Number(fee) <= 0) {
+  if (!name || fee <= 0) {
     return res.status(400).json({
-      message: "Ism va oylik to‘lovni kiriting."
+      message: "Ism va oylikni kiriting."
     });
   }
 
   const student = {
     id: Date.now(),
-    name: String(name).trim(),
-    fee: Number(fee),
+    name,
+    fee,
     paid: 0,
     came: 0,
     absent: 0
@@ -54,7 +60,7 @@ app.post("/api/students", (req, res) => {
 
 
 /* =========================
-   API: O‘QUVCHILAR
+   O‘QUVCHILAR
 ========================= */
 
 app.get("/api/students", (req, res) => {
@@ -63,11 +69,11 @@ app.get("/api/students", (req, res) => {
 
 
 /* =========================
-   API: TAHRIRLASH
+   TAHRIRLASH
 ========================= */
 
 app.put("/api/students/:id", (req, res) => {
-  const student = findStudent(req.params.id);
+  const student = getStudent(req.params.id);
 
   if (!student) {
     return res.status(404).json({
@@ -75,16 +81,17 @@ app.put("/api/students/:id", (req, res) => {
     });
   }
 
-  const { name, fee } = req.body;
+  const name = String(req.body.name || "").trim();
+  const fee = Number(req.body.fee);
 
-  if (!name || !fee || Number(fee) <= 0) {
+  if (!name || fee <= 0) {
     return res.status(400).json({
       message: "Ma’lumotlarni to‘g‘ri kiriting."
     });
   }
 
-  student.name = String(name).trim();
-  student.fee = Number(fee);
+  student.name = name;
+  student.fee = fee;
 
   res.json({
     message: "Ma’lumotlar saqlandi!",
@@ -94,21 +101,11 @@ app.put("/api/students/:id", (req, res) => {
 
 
 /* =========================
-   API: O‘CHIRISH
+   O‘CHIRISH
 ========================= */
 
 app.delete("/api/students/:id", (req, res) => {
   const id = Number(req.params.id);
-
-  const exists = students.some(
-    (student) => student.id === id
-  );
-
-  if (!exists) {
-    return res.status(404).json({
-      message: "O‘quvchi topilmadi."
-    });
-  }
 
   students = students.filter(
     (student) => student.id !== id
@@ -123,11 +120,11 @@ app.delete("/api/students/:id", (req, res) => {
 
 
 /* =========================
-   API: TO‘LOV
+   QARZ TO‘LASH
 ========================= */
 
 app.post("/api/students/:id/payment", (req, res) => {
-  const student = findStudent(req.params.id);
+  const student = getStudent(req.params.id);
 
   if (!student) {
     return res.status(404).json({
@@ -137,7 +134,7 @@ app.post("/api/students/:id/payment", (req, res) => {
 
   const amount = Number(req.body.amount);
 
-  if (!amount || amount <= 0) {
+  if (amount <= 0) {
     return res.status(400).json({
       message: "To‘lov summasini kiriting."
     });
@@ -151,7 +148,7 @@ app.post("/api/students/:id/payment", (req, res) => {
   if (amount > debt) {
     return res.status(400).json({
       message:
-        `Qarz ${debt.toLocaleString()} so‘m.`
+        "Qarzdan ko‘p to‘lov kiritildi."
     });
   }
 
@@ -159,96 +156,107 @@ app.post("/api/students/:id/payment", (req, res) => {
 
   res.json({
     message: "To‘lov saqlandi!",
-    student,
-    debt: Math.max(
-      student.fee - student.paid,
-      0
-    )
-  });
-});
-
-
-/* =========================
-   API: DAVOMAT
-========================= */
-
-app.post("/api/students/:id/attendance", (req, res) => {
-  const student = findStudent(req.params.id);
-
-  if (!student) {
-    return res.status(404).json({
-      message: "O‘quvchi topilmadi."
-    });
-  }
-
-  const status = req.body.status;
-
-  if (status !== "came" && status !== "absent") {
-    return res.status(400).json({
-      message: "Davomat holati noto‘g‘ri."
-    });
-  }
-
-  const date = today();
-
-  if (!attendance[student.id]) {
-    attendance[student.id] = {};
-  }
-
-  if (attendance[student.id][date]) {
-    return res.status(400).json({
-      message:
-        "Bugungi davomat allaqachon belgilangan."
-    });
-  }
-
-  attendance[student.id][date] = status;
-
-  if (status === "came") {
-    student.came++;
-  } else {
-    student.absent++;
-  }
-
-  res.json({
-    message:
-      status === "came"
-        ? "Bugun keldi deb belgilandi!"
-        : "Bugun kelmadi deb belgilandi!",
     student
   });
 });
 
 
 /* =========================
-   API: BUGUNGI DAVOMAT
+   DAVOMAT
 ========================= */
 
-app.get("/api/attendance/today", (req, res) => {
-  const date = today();
+app.post(
+  "/api/students/:id/attendance",
+  (req, res) => {
 
-  const came = [];
-  const absent = [];
+    const student =
+      getStudent(req.params.id);
 
-  students.forEach((student) => {
-    const status =
-      attendance[student.id]?.[date];
+    if (!student) {
+      return res.status(404).json({
+        message: "O‘quvchi topilmadi."
+      });
+    }
+
+    const status = req.body.status;
+
+    if (
+      status !== "came" &&
+      status !== "absent"
+    ) {
+      return res.status(400).json({
+        message: "Davomat xatosi."
+      });
+    }
+
+    const date = today();
+
+    if (!attendance[student.id]) {
+      attendance[student.id] = {};
+    }
+
+    if (attendance[student.id][date]) {
+      return res.status(400).json({
+        message:
+          "Bugungi davomat allaqachon belgilangan."
+      });
+    }
+
+    attendance[student.id][date] =
+      status;
 
     if (status === "came") {
-      came.push(student);
+      student.came++;
+    } else {
+      student.absent++;
     }
 
-    if (status === "absent") {
-      absent.push(student);
-    }
-  });
+    res.json({
+      message:
+        status === "came"
+          ? "Bugun keldi!"
+          : "Bugun kelmadi!",
+      student
+    });
+  }
+);
 
-  res.json({
-    date,
-    came,
-    absent
-  });
-});
+
+/* =========================
+   BUGUNGI DAVOMAT
+========================= */
+
+app.get(
+  "/api/attendance/today",
+  (req, res) => {
+
+    const date = today();
+
+    const came = [];
+    const absent = [];
+
+    students.forEach((student) => {
+
+      const status =
+        attendance[student.id]?.[date];
+
+      if (status === "came") {
+        came.push(student);
+      }
+
+      if (status === "absent") {
+        absent.push(student);
+      }
+
+    });
+
+    res.json({
+      date,
+      came,
+      absent
+    });
+  }
+);
 
 
 /* =========================
@@ -256,8 +264,11 @@ app.get("/api/attendance/today", (req, res) => {
 ========================= */
 
 app.get("/", (req, res) => {
+
   res.send(`
+
 <!DOCTYPE html>
+
 <html lang="uz">
 
 <head>
@@ -302,7 +313,8 @@ header {
   padding: 20px;
   margin-bottom: 20px;
   border-radius: 16px;
-  box-shadow: 0 4px 15px rgba(0,0,0,.08);
+  box-shadow:
+    0 5px 20px rgba(0,0,0,.08);
 }
 
 input {
@@ -315,7 +327,7 @@ input {
 }
 
 button {
-  border: none;
+  border: 0;
   padding: 11px 15px;
   margin: 5px 3px;
   border-radius: 10px;
@@ -338,7 +350,7 @@ button {
   color: white;
 }
 
-.come {
+.came {
   background: #22c55e;
   color: white;
 }
@@ -358,19 +370,23 @@ button {
   color: white;
 }
 
-.back {
-  background: #e2e8f0;
-}
-
 .attendance {
   background: #7c3aed;
   color: white;
 }
 
+.back {
+  background: #e2e8f0;
+}
+
+.hidden {
+  display: none;
+}
+
 .students {
   display: grid;
   grid-template-columns:
-    repeat(auto-fit, minmax(270px, 1fr));
+    repeat(auto-fit, minmax(280px, 1fr));
   gap: 15px;
 }
 
@@ -393,23 +409,17 @@ button {
 
 .success {
   color: #16a34a;
-  font-weight: bold;
 }
 
 .error {
   color: #dc2626;
-  font-weight: bold;
-}
-
-.hidden {
-  display: none;
 }
 
 .status {
+  background: #f8fafc;
   padding: 14px;
   margin: 8px 0;
   border-radius: 10px;
-  background: #f8fafc;
 }
 
 </style>
@@ -432,7 +442,7 @@ button {
 
 <!-- BOSH SAHIFA -->
 
-<div id="home">
+<section id="home">
 
 <div class="card">
 
@@ -449,7 +459,10 @@ button {
   placeholder="Oylik to‘lov"
 >
 
-<button id="addBtn" class="add">
+<button
+  id="addBtn"
+  class="add"
+>
 ➕ Qo‘shish
 </button>
 
@@ -460,11 +473,11 @@ button {
 
 <div class="card">
 
-<button id="attendanceBtn"
-        class="attendance">
-
+<button
+  id="attendanceBtn"
+  class="attendance"
+>
 📅 Bugungi davomat
-
 </button>
 
 </div>
@@ -474,20 +487,29 @@ button {
 
 <h2>👨‍🎓 O‘quvchilar</h2>
 
-<div id="students"></div>
+<div
+  id="students"
+  class="students"
+></div>
 
 </div>
 
-</div>
+</section>
 
 
 <!-- BATAFSIL -->
 
-<div id="detail" class="hidden">
+<section
+  id="detail"
+  class="hidden"
+>
 
 <div class="card">
 
-<button id="backBtn" class="back">
+<button
+  id="backBtn"
+  class="back"
+>
 ← Orqaga
 </button>
 
@@ -500,14 +522,18 @@ button {
 
 <p>
 ✅ To‘langan:
-<strong id="detailPaid"
-        class="paid"></strong>
+<strong
+  id="detailPaid"
+  class="paid"
+></strong>
 </p>
 
 <p>
 🔴 Qarz:
-<strong id="detailDebt"
-        class="debt"></strong>
+<strong
+  id="detailDebt"
+  class="debt"
+></strong>
 </p>
 
 <p>
@@ -534,8 +560,11 @@ kun
   placeholder="To‘lov summasi"
 >
 
-<button id="payBtn" class="pay">
-💳 To‘lash
+<button
+  id="payBtn"
+  class="pay"
+>
+💳 Qarzni to‘lash
 </button>
 
 <p id="payMessage"></p>
@@ -546,12 +575,18 @@ kun
 
 <h3>📅 Bugungi davomat</h3>
 
-<button id="cameBtn" class="come">
-✅ Keldi
+<button
+  id="cameBtn"
+  class="came"
+>
+✅ Bugun keldi
 </button>
 
-<button id="absentBtn" class="absent">
-❌ Kelmadi
+<button
+  id="absentBtn"
+  class="absent"
+>
+❌ Bugun kelmadi
 </button>
 
 <p id="attendanceMessage"></p>
@@ -569,7 +604,10 @@ kun
   type="number"
 >
 
-<button id="saveBtn" class="save">
+<button
+  id="saveBtn"
+  class="save"
+>
 💾 Saqlash
 </button>
 
@@ -578,30 +616,32 @@ kun
 
 <hr>
 
-<button id="deleteBtn"
-        class="delete">
-
+<button
+  id="deleteBtn"
+  class="delete"
+>
 🗑️ O‘chirish
-
 </button>
 
 </div>
 
-</div>
+</section>
 
 
 <!-- DAVOMAT -->
 
-<div id="attendancePage"
-     class="hidden">
+<section
+  id="attendancePage"
+  class="hidden"
+>
 
 <div class="card">
 
-<button id="backAttendance"
-        class="back">
-
+<button
+  id="backAttendance"
+  class="back"
+>
 ← Orqaga
-
 </button>
 
 <h2>📅 Bugungi davomat</h2>
@@ -628,7 +668,7 @@ kun
 
 </div>
 
-</div>
+</section>
 
 
 </div>
@@ -639,70 +679,72 @@ kun
 let selectedId = null;
 
 
-// FORMAT
+function money(value) {
 
-function money(number) {
-
-  return Number(number)
+  return Number(value)
     .toLocaleString("uz-UZ") +
     " so‘m";
 
 }
 
 
-// O‘QUVCHILARNI OLISH
+/* O‘QUVCHILAR */
 
 async function loadStudents() {
 
   const response =
     await fetch("/api/students");
 
-  const data =
+  const students =
     await response.json();
 
-  renderStudents(data);
-
+  renderStudents(students);
 }
 
 
-// RO‘YXAT
-
-function renderStudents(list) {
+function renderStudents(students) {
 
   const box =
-    document.getElementById("students");
+    document.getElementById(
+      "students"
+    );
 
   box.innerHTML = "";
 
 
-  if (list.length === 0) {
+  if (students.length === 0) {
 
     box.innerHTML =
       "<p>Hozircha o‘quvchilar yo‘q.</p>";
 
     return;
-
   }
 
 
-  list.forEach((student) => {
+  students.forEach((student) => {
 
     const debt =
       Math.max(
-        student.fee - student.paid,
+        student.fee -
+        student.paid,
         0
       );
 
 
-    const div =
-      document.createElement("div");
+    const card =
+      document.createElement(
+        "div"
+      );
 
-    div.className = "student";
+    card.className =
+      "student";
 
 
-    div.innerHTML = `
+    card.innerHTML = `
 
-      <h3>👤 ${student.name}</h3>
+      <h3>
+        👤 ${student.name}
+      </h3>
 
       <p>
         💰 Oylik:
@@ -712,24 +754,29 @@ function renderStudents(list) {
       <p>
         ✅ To‘langan:
         <strong class="paid">
-        ${money(student.paid)}
+          ${money(student.paid)}
         </strong>
       </p>
 
       <p>
         🔴 Qarz:
         <strong class="debt">
-        ${money(debt)}
+          ${money(debt)}
         </strong>
       </p>
 
-      <p>📅 Keldi: ${student.came} kun</p>
+      <p>
+        📅 Keldi:
+        ${student.came} kun
+      </p>
 
-      <p>❌ Kelmadi: ${student.absent} kun</p>
+      <p>
+        ❌ Kelmadi:
+        ${student.absent} kun
+      </p>
 
       <button
         class="detail"
-        data-id="${student.id}"
       >
         📋 Batafsil
       </button>
@@ -737,7 +784,7 @@ function renderStudents(list) {
     `;
 
 
-    div
+    card
       .querySelector(".detail")
       .addEventListener(
         "click",
@@ -745,14 +792,14 @@ function renderStudents(list) {
       );
 
 
-    box.appendChild(div);
+    box.appendChild(card);
 
   });
 
 }
 
 
-// QO‘SHISH
+/* QO‘SHISH */
 
 document
   .getElementById("addBtn")
@@ -775,10 +822,9 @@ document
 
 
       const message =
-        document
-          .getElementById(
-            "addMessage"
-          );
+        document.getElementById(
+          "addMessage"
+        );
 
 
       if (!name || fee <= 0) {
@@ -787,10 +833,9 @@ document
           "error";
 
         message.textContent =
-          "❌ Ism va oylik to‘lovni kiriting.";
+          "❌ Ma’lumotlarni kiriting.";
 
         return;
-
       }
 
 
@@ -809,7 +854,6 @@ document
               name,
               fee
             })
-
           }
         );
 
@@ -824,10 +868,10 @@ document
           "error";
 
         message.textContent =
-          "❌ " + data.message;
+          "❌ " +
+          data.message;
 
         return;
-
       }
 
 
@@ -853,18 +897,18 @@ document
   );
 
 
-// BATAFSIL
+/* BATAFSIL */
 
 async function showDetail(id) {
 
   const response =
     await fetch("/api/students");
 
-  const list =
+  const students =
     await response.json();
 
   const student =
-    list.find(
+    students.find(
       (item) =>
         item.id === id
     );
@@ -893,68 +937,83 @@ async function showDetail(id) {
 }
 
 
-// BATAFSILNI YANGILASH
-
 function updateDetail(student) {
 
   const debt =
     Math.max(
-      student.fee - student.paid,
+      student.fee -
+      student.paid,
       0
     );
 
 
   document
-    .getElementById("detailName")
+    .getElementById(
+      "detailName"
+    )
     .textContent =
     "👤 " + student.name;
 
 
   document
-    .getElementById("detailFee")
+    .getElementById(
+      "detailFee"
+    )
     .textContent =
     money(student.fee);
 
 
   document
-    .getElementById("detailPaid")
+    .getElementById(
+      "detailPaid"
+    )
     .textContent =
     money(student.paid);
 
 
   document
-    .getElementById("detailDebt")
+    .getElementById(
+      "detailDebt"
+    )
     .textContent =
     money(debt);
 
 
   document
-    .getElementById("detailCame")
+    .getElementById(
+      "detailCame"
+    )
     .textContent =
     student.came;
 
 
   document
-    .getElementById("detailAbsent")
+    .getElementById(
+      "detailAbsent"
+    )
     .textContent =
     student.absent;
 
 
   document
-    .getElementById("editName")
+    .getElementById(
+      "editName"
+    )
     .value =
     student.name;
 
 
   document
-    .getElementById("editFee")
+    .getElementById(
+      "editFee"
+    )
     .value =
     student.fee;
 
 }
 
 
-// TO‘LOV
+/* TO‘LOV */
 
 document
   .getElementById("payBtn")
@@ -973,10 +1032,9 @@ document
 
 
       const message =
-        document
-          .getElementById(
-            "payMessage"
-          );
+        document.getElementById(
+          "payMessage"
+        );
 
 
       if (amount <= 0) {
@@ -988,7 +1046,6 @@ document
           "❌ To‘lov summasini kiriting.";
 
         return;
-
       }
 
 
@@ -1008,7 +1065,6 @@ document
             body: JSON.stringify({
               amount
             })
-
           }
         );
 
@@ -1023,10 +1079,10 @@ document
           "error";
 
         message.textContent =
-          "❌ " + data.message;
+          "❌ " +
+          data.message;
 
         return;
-
       }
 
 
@@ -1044,7 +1100,9 @@ document
         .value = "";
 
 
-      updateDetail(data.student);
+      updateDetail(
+        data.student
+      );
 
       loadStudents();
 
@@ -1052,9 +1110,9 @@ document
   );
 
 
-// DAVOMAT
+/* DAVOMAT */
 
-async function setAttendance(status) {
+async function attendance(status) {
 
   const response =
     await fetch(
@@ -1072,7 +1130,6 @@ async function setAttendance(status) {
         body: JSON.stringify({
           status
         })
-
       }
     );
 
@@ -1082,10 +1139,9 @@ async function setAttendance(status) {
 
 
   const message =
-    document
-      .getElementById(
-        "attendanceMessage"
-      );
+    document.getElementById(
+      "attendanceMessage"
+    );
 
 
   if (!response.ok) {
@@ -1094,10 +1150,10 @@ async function setAttendance(status) {
       "error";
 
     message.textContent =
-      "❌ " + data.message;
+      "❌ " +
+      data.message;
 
     return;
-
   }
 
 
@@ -1105,10 +1161,13 @@ async function setAttendance(status) {
     "success";
 
   message.textContent =
-    "✅ " + data.message;
+    "✅ " +
+    data.message;
 
 
-  updateDetail(data.student);
+  updateDetail(
+    data.student
+  );
 
   loadStudents();
 
@@ -1116,25 +1175,31 @@ async function setAttendance(status) {
 
 
 document
-  .getElementById("cameBtn")
+  .getElementById(
+    "cameBtn"
+  )
   .addEventListener(
     "click",
-    () => setAttendance("came")
+    () => attendance("came")
   );
 
 
 document
-  .getElementById("absentBtn")
+  .getElementById(
+    "absentBtn"
+  )
   .addEventListener(
     "click",
-    () => setAttendance("absent")
+    () => attendance("absent")
   );
 
 
-// TAHRIRLASH
+/* TAHRIRLASH */
 
 document
-  .getElementById("saveBtn")
+  .getElementById(
+    "saveBtn"
+  )
   .addEventListener(
     "click",
     async () => {
@@ -1158,10 +1223,9 @@ document
 
 
       const message =
-        document
-          .getElementById(
-            "editMessage"
-          );
+        document.getElementById(
+          "editMessage"
+        );
 
 
       const response =
@@ -1180,7 +1244,6 @@ document
               name,
               fee
             })
-
           }
         );
 
@@ -1195,10 +1258,10 @@ document
           "error";
 
         message.textContent =
-          "❌ " + data.message;
+          "❌ " +
+          data.message;
 
         return;
-
       }
 
 
@@ -1209,7 +1272,9 @@ document
         "✅ Ma’lumotlar saqlandi!";
 
 
-      updateDetail(data.student);
+      updateDetail(
+        data.student
+      );
 
       loadStudents();
 
@@ -1217,10 +1282,12 @@ document
   );
 
 
-// O‘CHIRISH
+/* O‘CHIRISH */
 
 document
-  .getElementById("deleteBtn")
+  .getElementById(
+    "deleteBtn"
+  )
   .addEventListener(
     "click",
     async () => {
@@ -1239,9 +1306,7 @@ document
           "ni o‘chirishni xohlaysizmi?"
         )
       ) {
-
         return;
-
       }
 
 
@@ -1262,7 +1327,6 @@ document
         );
 
         return;
-
       }
 
 
@@ -1273,14 +1337,18 @@ document
         .getElementById(
           "detail"
         )
-        .classList.add("hidden");
+        .classList.add(
+          "hidden"
+        );
 
 
       document
         .getElementById(
           "home"
         )
-        .classList.remove("hidden");
+        .classList.remove(
+          "hidden"
+        );
 
 
       loadStudents();
@@ -1289,7 +1357,7 @@ document
   );
 
 
-// DAVOMAT SAHIFASI
+/* DAVOMAT SAHIFASI */
 
 document
   .getElementById(
@@ -1303,14 +1371,18 @@ document
         .getElementById(
           "home"
         )
-        .classList.add("hidden");
+        .classList.add(
+          "hidden"
+        );
 
 
       document
         .getElementById(
           "attendancePage"
         )
-        .classList.remove("hidden");
+        .classList.remove(
+          "hidden"
+        );
 
 
       loadAttendance();
@@ -1319,7 +1391,7 @@ document
   );
 
 
-// DAVOMATNI YUKLASH
+/* DAVOMAT RO‘YXATI */
 
 async function loadAttendance() {
 
@@ -1341,17 +1413,15 @@ async function loadAttendance() {
 
 
   const cameList =
-    document
-      .getElementById(
-        "cameList"
-      );
+    document.getElementById(
+      "cameList"
+    );
 
 
   const absentList =
-    document
-      .getElementById(
-        "absentList"
-      );
+    document.getElementById(
+      "absentList"
+    );
 
 
   cameList.innerHTML = "";
@@ -1378,7 +1448,8 @@ async function loadAttendance() {
           "status";
 
         div.textContent =
-          "🟢 " + student.name;
+          "🟢 " +
+          student.name;
 
         cameList.appendChild(div);
 
@@ -1407,7 +1478,8 @@ async function loadAttendance() {
           "status";
 
         div.textContent =
-          "🔴 " + student.name;
+          "🔴 " +
+          student.name;
 
         absentList.appendChild(div);
 
@@ -1419,10 +1491,12 @@ async function loadAttendance() {
 }
 
 
-// ORQAGA
+/* ORQAGA */
 
 document
-  .getElementById("backBtn")
+  .getElementById(
+    "backBtn"
+  )
   .addEventListener(
     "click",
     () => {
@@ -1431,14 +1505,18 @@ document
         .getElementById(
           "detail"
         )
-        .classList.add("hidden");
+        .classList.add(
+          "hidden"
+        );
 
 
       document
         .getElementById(
           "home"
         )
-        .classList.remove("hidden");
+        .classList.remove(
+          "hidden"
+        );
 
 
       selectedId = null;
@@ -1459,40 +1537,14 @@ document
         .getElementById(
           "attendancePage"
         )
-        .classList.add("hidden");
+        .classList.add(
+          "hidden"
+        );
 
 
       document
         .getElementById(
           "home"
         )
-        .classList.remove("hidden");
-
-    }
-  );
-
-
-// BOSHLASH
-
-loadStudents();
-
-</script>
-
-</body>
-</html>
-  `);
-});
-
-
-/* =========================
-   SERVER
-========================= */
-
-const PORT =
-  process.env.PORT || 3000;
-
-app.listen(
-  PORT,
-  "0.0.0.0",
-  () => {
-    co
+        .classList.remove(
+          
