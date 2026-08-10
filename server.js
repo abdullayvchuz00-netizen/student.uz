@@ -401,7 +401,7 @@ addButton.addEventListener("click", function() {
 
 
   renderStudents();
-
+renderCameList();
 });
 
 
