@@ -97,6 +97,10 @@ button {
   background: #dc2626;
   color: white;
 }
+.came {
+  background: #22c55e;
+  color: white;
+}
 .back {
   background: #e2e8f0;
 }
@@ -253,6 +257,15 @@ button {
 </button>
 
 <p id="debtMessage"></p>
+<hr>
+
+<h3>📅 Bugungi davomat</h3>
+
+<button id="cameButton" class="came">
+  ✅ Bugun keldi
+</button>
+
+<p id="attendanceMessage"></p>
       <h3>✏️ Tahrirlash</h3>
 
       <input
@@ -299,6 +312,8 @@ const payButton =
   document.getElementById("payButton");
 const debtButton =
   document.getElementById("debtButton");
+  const cameButton =
+  document.getElementById("cameButton");
 // O‘QUVCHI QO‘SHISH
 addButton.addEventListener("click", function() {
 
@@ -817,6 +832,27 @@ debtButton.addEventListener("click", function() {
   message.textContent =
     "🔴 " + amount.toLocaleString() +
     " so‘m qarz qo‘yildi!";
+
+  updateDetails(student);
+  renderStudents();
+
+});
+cameButton.addEventListener("click", function() {
+
+  const student = students.find(function(item) {
+    return item.id === selectedStudentId;
+  });
+
+  if (!student) return;
+
+  const message =
+    document.getElementById("attendanceMessage");
+
+  student.came++;
+
+  message.className = "success";
+  message.textContent =
+    "✅ Bugun keldi deb belgilandi!";
 
   updateDetails(student);
   renderStudents();
