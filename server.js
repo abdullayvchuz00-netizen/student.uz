@@ -9,7 +9,10 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// MongoDB ulanishi
+// Public papkadagi fayllarni ko'rsatish
+app.use(express.static("public"));
+
+// MongoDB
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => console.log("MongoDB ulandi"))
@@ -18,20 +21,27 @@ mongoose
 // O'quvchi modeli
 const studentSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true },
-    username: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-
+    name: {
+      type: String,
+      required: true
+    },
+    username: {
+      type: String,
+      required: true,
+      unique: true
+    },
+    password: {
+      type: String,
+      required: true
+    },
     monthlyFee: {
       type: Number,
       default: 0
     },
-
     paid: {
       type: Number,
       default: 0
     },
-
     attendance: [
       {
         date: String,
@@ -42,31 +52,19 @@ const studentSchema = new mongoose.Schema(
       }
     ]
   },
-  { timestamps: true }
+  {
+    timestamps: true
+  }
 );
 
 const Student = mongoose.model("Student", studentSchema);
 
 // Bosh sahifa
 app.get("/", (req, res) => {
-  res.send(`
-    <!DOCTYPE html>
-    <html lang="uz">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="google-site-verification" content="axKJ6XqePH6qiQF1-tTx9JFuHb6q4cmrYdz1WJ32jgM">
-        <title>StudentUZ</title>
-      </head>
-      <body>
-        <h1>StudentUZ</h1>
-        <p>O'quvchilar uchun platforma</p>
-      </body>
-    </html>
-  `);
+  res.sendFile(__dirname + "/public/index.html");
 });
 
-// Register
+// REGISTER
 app.post("/api/register", async (req, res) => {
   try {
     const { name, username, password } = req.body;
@@ -77,9 +75,9 @@ app.post("/api/register", async (req, res) => {
       });
     }
 
-    const existingStudent = await Student.findOne({ username });
+    const oldStudent = await Student.findOne({ username });
 
-    if (existingStudent) {
+    if (oldStudent) {
       return res.status(400).json({
         message: "Bu username allaqachon mavjud"
       });
@@ -92,18 +90,19 @@ app.post("/api/register", async (req, res) => {
     });
 
     res.status(201).json({
-      message: "Ro'yxatdan o'tish muvaffaqiyatli",
+      message: "Ro'yxatdan o'tish muvaffaqiyatli!",
       studentId: student._id
     });
   } catch (error) {
-    console.error(error);
+    console.error("Register error:", error);
+
     res.status(500).json({
       message: "Server xatosi"
     });
   }
 });
 
-// Login
+// LOGIN
 app.post("/api/login", async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -119,10 +118,13 @@ app.post("/api/login", async (req, res) => {
       });
     }
 
-    const debt = Math.max(student.monthlyFee - student.paid, 0);
+    const debt = Math.max(
+      student.monthlyFee - student.paid,
+      0
+    );
 
     res.json({
-      message: "Kirish muvaffaqiyatli",
+      message: "Kirish muvaffaqiyatli!",
       student: {
         id: student._id,
         name: student.name,
@@ -134,14 +136,15 @@ app.post("/api/login", async (req, res) => {
       }
     });
   } catch (error) {
-    console.error(error);
+    console.error("Login error:", error);
+
     res.status(500).json({
       message: "Server xatosi"
     });
   }
 });
 
-// O'quvchi ma'lumotlari
+// O'QUVCHI MA'LUMOTLARI
 app.get("/api/student/:id", async (req, res) => {
   try {
     const student = await Student.findById(req.params.id);
@@ -152,14 +155,17 @@ app.get("/api/student/:id", async (req, res) => {
       });
     }
 
-    const debt = Math.max(student.monthlyFee - student.paid, 0);
+    const debt = Math.max(
+      student.monthlyFee - student.paid,
+      0
+    );
 
     const came = student.attendance.filter(
-      (item) => item.status === "keldi"
+      item => item.status === "keldi"
     ).length;
 
     const absent = student.attendance.filter(
-      (item) => item.status === "kelmadi"
+      item => item.status === "kelmadi"
     ).length;
 
     res.json({
@@ -172,18 +178,28 @@ app.get("/api/student/:id", async (req, res) => {
       attendance: student.attendance
     });
   } catch (error) {
+    console.error(error);
+
     res.status(500).json({
       message: "Server xatosi"
     });
   }
 });
 
-// Davomat qo'shish
+// DAVOMAT
 app.post("/api/attendance", async (req, res) => {
   try {
-    const { studentId, date, status } = req.body;
+    const {
+      studentId,
+      date,
+      status
+    } = req.body;
 
-    if (!studentId || !date || !["keldi", "kelmadi"].includes(status)) {
+    if (
+      !studentId ||
+      !date ||
+      !["keldi", "kelmadi"].includes(status)
+    ) {
       return res.status(400).json({
         message: "Ma'lumotlar noto'g'ri"
       });
@@ -205,22 +221,30 @@ app.post("/api/attendance", async (req, res) => {
     await student.save();
 
     res.json({
-      message: "Davomat saqlandi"
+      message: "Davomat saqlandi!"
     });
   } catch (error) {
-    console.error(error);
+    console.error("Attendance error:", error);
+
     res.status(500).json({
       message: "Server xatosi"
     });
   }
 });
 
-// To'lov qo'shish
+// TO'LOV
 app.post("/api/payment", async (req, res) => {
   try {
-    const { studentId, amount } = req.body;
+    const {
+      studentId,
+      amount
+    } = req.body;
 
-    if (!studentId || !amount || amount <= 0) {
+    if (
+      !studentId ||
+      !amount ||
+      Number(amount) <= 0
+    ) {
       return res.status(400).json({
         message: "To'lov summasi noto'g'ri"
       });
@@ -236,32 +260,38 @@ app.post("/api/payment", async (req, res) => {
 
     student.paid += Number(amount);
 
-    // To'lov oylik summadan oshib ketmasligi uchun
     if (student.paid > student.monthlyFee) {
       student.paid = student.monthlyFee;
     }
 
     await student.save();
 
-    const debt = Math.max(student.monthlyFee - student.paid, 0);
+    const debt = Math.max(
+      student.monthlyFee - student.paid,
+      0
+    );
 
     res.json({
-      message: "To'lov saqlandi",
+      message: "To'lov saqlandi!",
       paid: student.paid,
       debt
     });
   } catch (error) {
-    console.error(error);
+    console.error("Payment error:", error);
+
     res.status(500).json({
       message: "Server xatosi"
     });
   }
 });
 
-// Yangi oy uchun to'lov ochish
+// YANGI OY
 app.post("/api/month", async (req, res) => {
   try {
-    const { studentId, monthlyFee } = req.body;
+    const {
+      studentId,
+      monthlyFee
+    } = req.body;
 
     const student = await Student.findById(studentId);
 
@@ -277,21 +307,24 @@ app.post("/api/month", async (req, res) => {
     await student.save();
 
     res.json({
-      message: "Yangi oy uchun to'lov yaratildi",
+      message: "Yangi oy yaratildi!",
       monthlyFee: student.monthlyFee,
       debt: student.monthlyFee
     });
   } catch (error) {
-    console.error(error);
+    console.error("Month error:", error);
+
     res.status(500).json({
       message: "Server xatosi"
     });
   }
 });
 
-// Port
+// SERVER
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Server ${PORT}-portda ishlayapti`);
+  console.log(
+    `Server ${PORT}-portda ishlayapti`
+  );
 });
