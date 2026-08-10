@@ -2,147 +2,124 @@ const express = require("express");
 
 const app = express();
 
+app.use(express.json());
+
 app.get("/", (req, res) => {
   res.send(`
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudentUZ</title>
 
-  <title>StudentUZ</title>
+<style>
+* {
+  box-sizing: border-box;
+}
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f1f5f9;
+  color: #0f172a;
+}
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f1f5f9;
-      color: #0f172a;
-    }
+header {
+  background: #2563eb;
+  color: white;
+  padding: 22px;
+  text-align: center;
+}
 
-    header {
-      background: #2563eb;
-      color: white;
-      padding: 20px;
-      text-align: center;
-    }
+.container {
+  max-width: 1000px;
+  margin: 25px auto;
+  padding: 15px;
+}
 
-    header h1 {
-      margin: 0;
-    }
+.card {
+  background: white;
+  padding: 20px;
+  margin-bottom: 15px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,.08);
+}
 
-    .container {
-      max-width: 1000px;
-      margin: 30px auto;
-      padding: 15px;
-    }
+input {
+  width: 100%;
+  padding: 12px;
+  margin: 6px 0;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+}
 
-    .welcome {
-      background: white;
-      padding: 25px;
-      border-radius: 16px;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-    }
+button {
+  border: 0;
+  padding: 11px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 8px;
+}
 
-    .welcome h2 {
-      margin-top: 0;
-    }
+.add {
+  background: #2563eb;
+  color: white;
+}
 
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-    }
+.detail {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
 
-    .card {
-      background: white;
-      padding: 22px;
-      border-radius: 16px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-    }
+.pay {
+  background: #dcfce7;
+  color: #166534;
+}
 
-    .card h3 {
-      margin-top: 0;
-      color: #475569;
-    }
+.back {
+  background: #e2e8f0;
+  color: #334155;
+}
 
-    .number {
-      font-size: 30px;
-      font-weight: bold;
-      margin: 10px 0;
-    }
+.students {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
 
-    .green {
-      color: #16a34a;
-    }
+.student {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,.08);
+}
 
-    .red {
-      color: #dc2626;
-    }
+.student h3 {
+  margin-top: 0;
+}
 
-    .blue {
-      color: #2563eb;
-    }
+.debt {
+  color: #dc2626;
+  font-weight: bold;
+}
 
-    .section {
-      background: white;
-      margin-top: 20px;
-      padding: 25px;
-      border-radius: 16px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-    }
+.paid {
+  color: #16a34a;
+  font-weight: bold;
+}
 
-    .section h2 {
-      margin-top: 0;
-    }
+.hidden {
+  display: none;
+}
 
-    button {
-      border: none;
-      padding: 12px 18px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 15px;
-      margin: 5px;
-    }
-
-    .come {
-      background: #dcfce7;
-      color: #166534;
-    }
-
-    .notcome {
-      background: #fee2e2;
-      color: #991b1b;
-    }
-
-    .pay {
-      background: #dbeafe;
-      color: #1d4ed8;
-    }
-
-    input {
-      width: 100%;
-      padding: 12px;
-      margin: 7px 0;
-      border: 1px solid #cbd5e1;
-      border-radius: 10px;
-      font-size: 15px;
-    }
-
-    .status {
-      display: inline-block;
-      padding: 8px 14px;
-      border-radius: 20px;
-      background: #dcfce7;
-      color: #166534;
-      font-weight: bold;
-    }
-  </style>
+.stat {
+  padding: 15px;
+  background: #f8fafc;
+  border-radius: 10px;
+  margin: 8px 0;
+}
+</style>
 </head>
 
 <body>
@@ -154,116 +131,117 @@ app.get("/", (req, res) => {
 
 <div class="container">
 
-  <div class="welcome">
-    <h2>Xush kelibsiz!</h2>
-    <p>O‘quvchi ma'lumotlarini boshqarish paneli.</p>
-    <span class="status">🟢 Tizim ishlayapti</span>
-  </div>
-
-  <div class="cards">
+  <!-- DASHBOARD -->
+  <div id="dashboard">
 
     <div class="card">
-      <h3>👨‍🎓 O‘quvchilar</h3>
-      <div class="number blue" id="students">0</div>
-      <p>Jami o‘quvchi</p>
+      <h2>➕ O‘quvchi qo‘shish</h2>
+
+      <input id="name" placeholder="O‘quvchi ismi">
+
+      <input
+        id="fee"
+        type="number"
+        placeholder="Oylik to‘lov"
+      >
+
+      <button class="add" onclick="addStudent()">
+        O‘quvchi qo‘shish
+      </button>
+
+      <p id="message"></p>
     </div>
 
     <div class="card">
-      <h3>📅 Bugun</h3>
-      <div class="number green" id="came">0</div>
-      <p>Keldi</p>
-    </div>
+      <h2>👨‍🎓 O‘quvchilar</h2>
 
-    <div class="card">
-      <h3>❌ Davomat</h3>
-      <div class="number red" id="absent">0</div>
-      <p>Kelmadi</p>
-    </div>
-
-    <div class="card">
-      <h3>💰 Qarzdorlik</h3>
-      <div class="number red" id="debt">0 so'm</div>
-      <p>Jami qarz</p>
+      <div id="students" class="students">
+      </div>
     </div>
 
   </div>
 
-  <div class="section">
 
-    <h2>👨‍🎓 O‘quvchi qo‘shish</h2>
+  <!-- BATAFSIL -->
+  <div id="details" class="hidden">
 
-    <input
-      id="studentName"
-      type="text"
-      placeholder="O‘quvchi ismi"
-    >
+    <div class="card">
 
-    <input
-      id="monthlyFee"
-      type="number"
-      placeholder="Oylik to‘lov"
-    >
+      <button class="back" onclick="showDashboard()">
+        ← O‘quvchilar ro‘yxatiga qaytish
+      </button>
 
-    <button class="pay" onclick="addStudent()">
-      ➕ O‘quvchi qo‘shish
-    </button>
+      <h2 id="detailName"></h2>
 
-    <p id="message"></p>
+      <div class="stat">
+        💰 Oylik:
+        <strong id="detailFee"></strong>
+      </div>
 
-  </div>
+      <div class="stat">
+        ✅ To‘langan:
+        <strong class="paid" id="detailPaid"></strong>
+      </div>
 
-  <div class="section">
+      <div class="stat">
+        🔴 Qarz:
+        <strong class="debt" id="detailDebt"></strong>
+      </div>
 
-    <h2>📋 Davomat</h2>
+      <div class="stat">
+        📅 Keldi:
+        <strong id="detailCame"></strong> kun
+      </div>
 
-    <button class="come" onclick="markCome()">
-      ✅ Keldi
-    </button>
+      <div class="stat">
+        ❌ Kelmadi:
+        <strong id="detailAbsent"></strong> kun
+      </div>
 
-    <button class="notcome" onclick="markAbsent()">
-      ❌ Kelmadi
-    </button>
+      <hr>
 
-    <p id="attendanceMessage">
-      Bugungi davomat hali belgilanmagan.
-    </p>
+      <h3>💳 To‘lov qilish</h3>
 
-  </div>
+      <input
+        id="payment"
+        type="number"
+        placeholder="To‘lov summasi"
+      >
 
-  <div class="section">
+      <button class="pay" onclick="makePayment()">
+        To‘lovni saqlash
+      </button>
 
-    <h2>💰 To‘lov</h2>
+      <p id="paymentMessage"></p>
 
-    <input
-      id="payment"
-      type="number"
-      placeholder="To‘lov summasi"
-    >
+      <hr>
 
-    <button class="pay" onclick="makePayment()">
-      💳 To‘lov qabul qilish
-    </button>
+      <h3>📋 Davomat tarixi</h3>
 
-    <p id="paymentMessage"></p>
+      <div id="attendance"></div>
+
+    </div>
 
   </div>
 
 </div>
 
+
 <script>
 
-let studentCount = 0;
-let cameCount = 0;
-let absentCount = 0;
-let totalDebt = 0;
+let students = [];
 
+let selectedStudentId = null;
+
+
+// O'quvchi qo'shish
 function addStudent() {
 
   const name =
-    document.getElementById("studentName").value;
+    document.getElementById("name").value.trim();
 
   const fee =
-    Number(document.getElementById("monthlyFee").value);
+    Number(document.getElementById("fee").value);
 
   if (!name || !fee) {
     document.getElementById("message").textContent =
@@ -271,75 +249,230 @@ function addStudent() {
     return;
   }
 
-  studentCount++;
-  totalDebt += fee;
+  const student = {
+    id: Date.now(),
 
-  document.getElementById("students").textContent =
-    studentCount;
+    name: name,
 
-  document.getElementById("debt").textContent =
-    totalDebt.toLocaleString() + " so'm";
+    fee: fee,
+
+    paid: 0,
+
+    came: 0,
+
+    absent: 0,
+
+    attendance: []
+  };
+
+  students.push(student);
+
+  document.getElementById("name").value = "";
+  document.getElementById("fee").value = "";
 
   document.getElementById("message").textContent =
-    "✅ " + name + " qo‘shildi!";
+    "✅ O‘quvchi qo‘shildi!";
 
-  document.getElementById("studentName").value = "";
-  document.getElementById("monthlyFee").value = "";
+  renderStudents();
 }
 
-function markCome() {
 
-  cameCount++;
+// O'quvchilar ro'yxati
+function renderStudents() {
 
-  document.getElementById("came").textContent =
-    cameCount;
+  const container =
+    document.getElementById("students");
 
-  document.getElementById("attendanceMessage").textContent =
-    "✅ O‘quvchi bugun keldi.";
+  if (students.length === 0) {
+
+    container.innerHTML =
+      "<p>Hozircha o‘quvchilar yo‘q.</p>";
+
+    return;
+  }
+
+  container.innerHTML = students.map(student => {
+
+    const debt =
+      Math.max(student.fee - student.paid, 0);
+
+    return \`
+      <div class="student">
+
+        <h3>👤 \${student.name}</h3>
+
+        <p>
+          Oylik:
+          <strong>
+            \${student.fee.toLocaleString()} so‘m
+          </strong>
+        </p>
+
+        <p>
+          Qarz:
+          <strong class="debt">
+            \${debt.toLocaleString()} so‘m
+          </strong>
+        </p>
+
+        <p>
+          Keldi:
+          \${student.came} kun
+        </p>
+
+        <p>
+          Kelmadi:
+          \${student.absent} kun
+        </p>
+
+        <button
+          class="detail"
+          onclick="showDetails(\${student.id})"
+        >
+          Batafsil →
+        </button>
+
+      </div>
+    \`;
+
+  }).join("");
 }
 
-function markAbsent() {
 
-  absentCount++;
+// Batafsil sahifa
+function showDetails(id) {
 
-  document.getElementById("absent").textContent =
-    absentCount;
+  const student =
+    students.find(s => s.id === id);
 
-  document.getElementById("attendanceMessage").textContent =
-    "❌ O‘quvchi bugun kelmadi.";
+  if (!student) return;
+
+  selectedStudentId = id;
+
+  document.getElementById("dashboard")
+    .classList.add("hidden");
+
+  document.getElementById("details")
+    .classList.remove("hidden");
+
+  document.getElementById("detailName")
+    .textContent =
+    "👤 " + student.name;
+
+  updateDetails(student);
 }
 
+
+// Ma'lumotlarni yangilash
+function updateDetails(student) {
+
+  const debt =
+    Math.max(student.fee - student.paid, 0);
+
+  document.getElementById("detailFee")
+    .textContent =
+    student.fee.toLocaleString() + " so‘m";
+
+  document.getElementById("detailPaid")
+    .textContent =
+    student.paid.toLocaleString() + " so‘m";
+
+  document.getElementById("detailDebt")
+    .textContent =
+    debt.toLocaleString() + " so‘m";
+
+  document.getElementById("detailCame")
+    .textContent =
+    student.came;
+
+  document.getElementById("detailAbsent")
+    .textContent =
+    student.absent;
+
+  const attendance =
+    document.getElementById("attendance");
+
+  if (student.attendance.length === 0) {
+
+    attendance.innerHTML =
+      "<p>Davomat tarixi hali yo‘q.</p>";
+
+    return;
+  }
+
+  attendance.innerHTML =
+    student.attendance.map(item => \`
+      <div class="stat">
+        \${item.date} —
+        \${item.status === "keldi"
+          ? "✅ Keldi"
+          : "❌ Kelmadi"}
+      </div>
+    \`).join("");
+}
+
+
+// To'lov
 function makePayment() {
+
+  const student =
+    students.find(s => s.id === selectedStudentId);
+
+  if (!student) return;
 
   const amount =
     Number(document.getElementById("payment").value);
 
-  if (!amount) {
-    document.getElementById("paymentMessage").textContent =
+  if (!amount || amount <= 0) {
+
+    document.getElementById("paymentMessage")
+      .textContent =
       "❌ To‘lov summasini kiriting.";
+
     return;
   }
 
-  totalDebt -= amount;
+  student.paid += amount;
 
-  if (totalDebt < 0) {
-    totalDebt = 0;
-  }
-
-  document.getElementById("debt").textContent =
-    totalDebt.toLocaleString() + " so'm";
-
-  if (totalDebt === 0) {
-    document.getElementById("paymentMessage").textContent =
-      "✅ Qarzdorlik to‘liq yopildi!";
-  } else {
-    document.getElementById("paymentMessage").textContent =
-      "✅ To‘lov qabul qilindi. Qolgan qarz: " +
-      totalDebt.toLocaleString() +
-      " so'm";
+  if (student.paid > student.fee) {
+    student.paid = student.fee;
   }
 
   document.getElementById("payment").value = "";
+
+  const debt =
+    Math.max(student.fee - student.paid, 0);
+
+  if (debt === 0) {
+
+    document.getElementById("paymentMessage")
+      .textContent =
+      "✅ Qarzdorlik to‘liq yopildi!";
+
+  } else {
+
+    document.getElementById("paymentMessage")
+      .textContent =
+      "✅ To‘lov saqlandi. Qolgan qarz: " +
+      debt.toLocaleString() +
+      " so‘m";
+  }
+
+  updateDetails(student);
+  renderStudents();
+}
+
+
+// Dashboardga qaytish
+function showDashboard() {
+
+  document.getElementById("details")
+    .classList.add("hidden");
+
+  document.getElementById("dashboard")
+    .classList.remove("hidden");
+
+  selectedStudentId = null;
 }
 
 </script>
@@ -352,5 +485,7 @@ function makePayment() {
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`StudentUZ ${PORT}-portda ishlayapti`);
+  console.log(
+    \`StudentUZ server \${PORT}-portda ishlayapti\`
+  );
 });
