@@ -253,13 +253,13 @@ button {
     transform: translateY(0);
   }
 }
-</style>  </head>  <body> <body>
-
-<div id="welcomeScreen">
+</style>  </head>  <body> <div id="welcomeScreen">
 
     <div class="welcomeLogo">
   🎓
-</div>
+</div><body>
+
+
 
   <h1>StudentUZ</h1>
 
