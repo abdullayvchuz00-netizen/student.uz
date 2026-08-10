@@ -2,8 +2,6 @@ const express = require("express");
 
 const app = express();
 
-let students = [];
-
 app.get("/", (req, res) => {
   res.send(`
 <!DOCTYPE html>
@@ -89,30 +87,34 @@ button {
   background: #dcfce7;
   color: #166534;
 }
+
 .pay {
   background: #16a34a;
   color: white;
 }
+
 .debtAdd {
   background: #dc2626;
   color: white;
 }
+
 .came {
   background: #22c55e;
   color: white;
 }
+
 .absent {
   background: #ef4444;
   color: white;
 }
+
 .back {
   background: #e2e8f0;
 }
 
 .students {
   display: grid;
-  grid-template-columns:
-    repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 15px;
 }
 
@@ -146,6 +148,35 @@ button {
 .hidden {
   display: none;
 }
+
+.menuButton {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  text-align: left;
+  font-size: 17px;
+}
+
+.reportBox {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.stat {
+  background: #f8fafc;
+  padding: 18px;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+}
+
+.stat strong {
+  display: block;
+  font-size: 20px;
+  margin-top: 8px;
+}
+
 </style>
 </head>
 
@@ -158,9 +189,34 @@ button {
 
 <div class="container">
 
+  <!-- ASOSIY MENYU -->
   <div id="dashboard">
 
     <div class="card">
+
+      <h2>📋 Asosiy menyu</h2>
+
+      <button id="addMenuButton" class="add menuButton">
+        ➕ O‘quvchi qo‘shish
+      </button>
+
+      <button id="studentsMenuButton" class="detail menuButton">
+        👨‍🎓 O‘quvchilar
+      </button>
+
+      <button id="reportMenuButton" class="save menuButton">
+        📊 Oylik hisobot
+      </button>
+
+      <button id="settingsMenuButton" class="back menuButton">
+        ⚙️ Sozlamalar
+      </button>
+
+    </div>
+
+
+    <!-- O‘QUVCHI QO‘SHISH -->
+    <div id="addSection" class="card">
 
       <h2>➕ O‘quvchi qo‘shish</h2>
 
@@ -185,7 +241,8 @@ button {
     </div>
 
 
-    <div class="card">
+    <!-- O‘QUVCHILAR -->
+    <div id="studentsSection" class="card">
 
       <h2>👨‍🎓 O‘quvchilar</h2>
 
@@ -193,9 +250,53 @@ button {
 
     </div>
 
+
+    <!-- KELGANLAR -->
+    <div class="card">
+
+      <h2>👥 Bugun kelganlar</h2>
+
+      <div id="cameList"></div>
+
+    </div>
+
+
+    <!-- HISOBOT -->
+    <div id="reportSection" class="card hidden">
+
+      <h2>📊 Oylik hisobot</h2>
+
+      <input
+        id="reportMonth"
+        type="month"
+      >
+
+      <button id="reportButton" class="save">
+        📊 Hisobotni ko‘rsatish
+      </button>
+
+      <div id="reportResult"></div>
+
+    </div>
+
+
+    <!-- SOZLAMALAR -->
+    <div id="settingsSection" class="card hidden">
+
+      <h2>⚙️ Sozlamalar</h2>
+
+      <p>Hozircha sozlamalar mavjud emas.</p>
+
+      <button id="settingsBackButton" class="back">
+        ← Orqaga
+      </button>
+
+    </div>
+
   </div>
 
 
+  <!-- BATAFSIL -->
   <div id="details" class="hidden">
 
     <div class="card">
@@ -230,49 +331,55 @@ button {
         ❌ Kelmadi:
         <strong id="detailAbsent"></strong> kun
       </p>
-<hr>
 
-<h3>💳 Qarz to‘lash</h3>
-
-<input
-  id="paymentAmount"
-  type="number"
-  placeholder="To‘lanadigan summa"
->
-
-<button id="payButton" class="pay">
-  💳 Qarz to‘lash
-</button>
-
-<p id="paymentMessage"></p>
       <hr>
-<hr>
 
-<h3>🔴 Qarz qo‘yish</h3>
+      <h3>💳 Qarz to‘lash</h3>
 
-<input
-  id="debtAmount"
-  type="number"
-  placeholder="Qarz summasi"
->
+      <input
+        id="paymentAmount"
+        type="number"
+        placeholder="To‘lanadigan summa"
+      >
 
-<button id="debtButton" class="debtAdd">
-  ➕ Qarz qo‘yish
-</button>
+      <button id="payButton" class="pay">
+        💳 Qarz to‘lash
+      </button>
 
-<p id="debtMessage"></p>
-<hr>
+      <p id="paymentMessage"></p>
 
-<h3>📅 Bugungi davomat</h3>
+      <hr>
 
-<button id="cameButton" class="came">
-  ✅ Bugun keldi
-</button>
+      <h3>🔴 Qarz qo‘yish</h3>
 
-<p id="attendanceMessage"></p>
-<button id="absentButton" class="absent">
-  ❌ Bugun kelmadi
-</button>
+      <input
+        id="debtAmount"
+        type="number"
+        placeholder="Qarz summasi"
+      >
+
+      <button id="debtButton" class="debtAdd">
+        ➕ Qarz qo‘yish
+      </button>
+
+      <p id="debtMessage"></p>
+
+      <hr>
+
+      <h3>📅 Bugungi davomat</h3>
+
+      <button id="cameButton" class="came">
+        ✅ Bugun keldi
+      </button>
+
+      <button id="absentButton" class="absent">
+        ❌ Bugun kelmadi
+      </button>
+
+      <p id="attendanceMessage"></p>
+
+      <hr>
+
       <h3>✏️ Tahrirlash</h3>
 
       <input
@@ -307,6 +414,7 @@ let selectedStudentId = null;
 
 
 // ELEMENTLAR
+
 const addButton =
   document.getElementById("addButton");
 
@@ -315,15 +423,118 @@ const backButton =
 
 const saveButton =
   document.getElementById("saveButton");
+
 const payButton =
   document.getElementById("payButton");
+
 const debtButton =
   document.getElementById("debtButton");
-  const cameButton =
+
+const cameButton =
   document.getElementById("cameButton");
-  const absentButton =
+
+const absentButton =
   document.getElementById("absentButton");
+
+const addMenuButton =
+  document.getElementById("addMenuButton");
+
+const studentsMenuButton =
+  document.getElementById("studentsMenuButton");
+
+const reportMenuButton =
+  document.getElementById("reportMenuButton");
+
+const settingsMenuButton =
+  document.getElementById("settingsMenuButton");
+
+const settingsBackButton =
+  document.getElementById("settingsBackButton");
+
+const reportButton =
+  document.getElementById("reportButton");
+
+
+// BO‘LIMLAR
+
+const addSection =
+  document.getElementById("addSection");
+
+const studentsSection =
+  document.getElementById("studentsSection");
+
+const reportSection =
+  document.getElementById("reportSection");
+
+const settingsSection =
+  document.getElementById("settingsSection");
+
+
+// MENYU FUNKSIYALARI
+
+addMenuButton.addEventListener("click", function() {
+
+  addSection.classList.remove("hidden");
+
+  studentsSection.classList.add("hidden");
+
+  reportSection.classList.add("hidden");
+
+  settingsSection.classList.add("hidden");
+
+});
+
+
+studentsMenuButton.addEventListener("click", function() {
+
+  addSection.classList.add("hidden");
+
+  studentsSection.classList.remove("hidden");
+
+  reportSection.classList.add("hidden");
+
+  settingsSection.classList.add("hidden");
+
+});
+
+
+reportMenuButton.addEventListener("click", function() {
+
+  addSection.classList.add("hidden");
+
+  studentsSection.classList.add("hidden");
+
+  reportSection.classList.remove("hidden");
+
+  settingsSection.classList.add("hidden");
+
+});
+
+
+settingsMenuButton.addEventListener("click", function() {
+
+  addSection.classList.add("hidden");
+
+  studentsSection.classList.add("hidden");
+
+  reportSection.classList.add("hidden");
+
+  settingsSection.classList.remove("hidden");
+
+});
+
+
+settingsBackButton.addEventListener("click", function() {
+
+  settingsSection.classList.add("hidden");
+
+  studentsSection.classList.remove("hidden");
+
+});
+
+
 // O‘QUVCHI QO‘SHISH
+
 addButton.addEventListener("click", function() {
 
   const name =
@@ -375,6 +586,8 @@ addButton.addEventListener("click", function() {
 
     paid: 0,
 
+    extraDebt: 0,
+
     came: 0,
 
     absent: 0
@@ -401,11 +614,28 @@ addButton.addEventListener("click", function() {
 
 
   renderStudents();
-renderCameList();
+
+  renderCameList();
+
 });
 
 
-// RO‘YXATNI CHIQARISH
+// UMUMIY QARZ
+
+function getDebt(student) {
+
+  return Math.max(
+    student.fee -
+    student.paid +
+    student.extraDebt,
+    0
+  );
+
+}
+
+
+// O‘QUVCHILAR RO‘YXATI
+
 function renderStudents() {
 
   const list =
@@ -426,10 +656,7 @@ function renderStudents() {
   students.forEach(function(student) {
 
     const debt =
-      Math.max(
-        student.fee - student.paid,
-        0
-      );
+      getDebt(student);
 
 
     const card =
@@ -452,6 +679,15 @@ function renderStudents() {
       "💰 Oylik: " +
       student.fee.toLocaleString() +
       " so‘m";
+
+
+    const paidText =
+      document.createElement("p");
+
+    paidText.innerHTML =
+      "✅ To‘langan: <strong class='paid'>" +
+      student.paid.toLocaleString() +
+      " so‘m</strong>";
 
 
     const debtText =
@@ -534,6 +770,7 @@ function renderStudents() {
 
     card.appendChild(title);
     card.appendChild(fee);
+    card.appendChild(paidText);
     card.appendChild(debtText);
     card.appendChild(came);
     card.appendChild(absent);
@@ -545,20 +782,68 @@ function renderStudents() {
     list.appendChild(card);
 
   });
+
+}
+
+
+// BUGUN KELGANLAR
+
+function renderCameList() {
+
+  const list =
+    document.getElementById("cameList");
+
+  list.innerHTML = "";
+
+
+  const cameStudents =
+    students.filter(function(student) {
+
+      return student.came > 0;
+
+    });
+
+
+  if (cameStudents.length === 0) {
+
+    list.innerHTML =
+      "<p>Bugun kelgan o‘quvchilar yo‘q.</p>";
+
+    return;
+  }
+
+
+  cameStudents.forEach(function(student) {
+
+    const item =
+      document.createElement("p");
+
+    item.textContent =
+      "✅ " + student.name;
+
+    list.appendChild(item);
+
+  });
+
 }
 
 
 // BATAFSIL
+
 function showDetails(id) {
 
   const student =
     students.find(function(item) {
+
       return item.id === id;
+
     });
 
 
   if (!student) {
+
     return;
+
   }
 
 
@@ -581,13 +866,11 @@ function showDetails(id) {
 
 
 // MA'LUMOTNI KO‘RSATISH
+
 function updateDetails(student) {
 
   const debt =
-    Math.max(
-      student.fee - student.paid,
-      0
-    );
+    getDebt(student);
 
 
   document
@@ -644,18 +927,23 @@ function updateDetails(student) {
 
 
 // TAHRIRLASH
+
 saveButton.addEventListener(
   "click",
   function() {
 
     const student =
       students.find(function(item) {
+
         return item.id === selectedStudentId;
+
       });
 
 
     if (!student) {
+
       return;
+
     }
 
 
@@ -689,16 +977,20 @@ saveButton.addEventListener(
         "❌ Ma’lumotlarni to‘g‘ri kiriting.";
 
       return;
+
     }
 
 
     student.name = newName;
+
     student.fee = newFee;
 
 
     updateDetails(student);
 
     renderStudents();
+
+    renderCameList();
 
 
     message.className = "success";
@@ -711,16 +1003,21 @@ saveButton.addEventListener(
 
 
 // O‘CHIRISH
+
 function deleteStudent(id) {
 
   const student =
     students.find(function(item) {
+
       return item.id === id;
+
     });
 
 
   if (!student) {
+
     return;
+
   }
 
 
@@ -730,22 +1027,29 @@ function deleteStudent(id) {
       "ni o‘chirishni xohlaysizmi?"
     )
   ) {
+
     return;
+
   }
 
 
   students =
     students.filter(function(item) {
+
       return item.id !== id;
+
     });
 
 
   renderStudents();
 
+  renderCameList();
+
 }
 
 
 // ORQAGA
+
 backButton.addEventListener(
   "click",
   function() {
@@ -766,150 +1070,321 @@ backButton.addEventListener(
 );
 
 
-renderStudents();
-payButton.addEventListener("click", function() {
+// QARZ TO‘LASH
 
-  const student = students.find(function(item) {
-    return item.id === selectedStudentId;
-  });
-
-  if (!student) return;
-
-  const amount = Number(
-    document.getElementById("paymentAmount").value
-  );
-
-  const message =
-    document.getElementById("paymentMessage");
-
-  const debt =
-    Math.max(student.fee - student.paid, 0);
-
-  if (amount <= 0) {
-    message.className = "error";
-    message.textContent =
-      "❌ To‘lov summasini kiriting.";
-    return;
-  }
-
-  if (amount > debt) {
-    message.className = "error";
-    message.textContent =
-      "❌ Qarzdan ko‘p to‘lab bo‘lmaydi.";
-    return;
-  }
-
-  student.paid += amount;
-
-  document.getElementById("paymentAmount").value = "";
-
-  message.className = "success";
-  message.textContent =
-    "✅ " + amount.toLocaleString() + " so‘m to‘landi!";
-
-  updateDetails(student);
-  renderStudents();
-
-});
-debtButton.addEventListener("click", function() {
-
-  const student = students.find(function(item) {
-    return item.id === selectedStudentId;
-  });
-
-  if (!student) return;
-
-  const amount = Number(
-    document.getElementById("debtAmount").value
-  );
-
-  const message =
-    document.getElementById("debtMessage");
-
-  if (amount <= 0) {
-    message.className = "error";
-    message.textContent =
-      "❌ Qarz summasini kiriting.";
-    return;
-  }
-
-  student.debt += amount;
-
-  document.getElementById("debtAmount").value = "";
-
-  message.className = "success";
-  message.textContent =
-    "🔴 " + amount.toLocaleString() +
-    " so‘m qarz qo‘yildi!";
-
-  updateDetails(student);
-  renderStudents();
-
-});
-cameButton.addEventListener("click", function() {
-
-  const student = students.find(function(item) {
-    return item.id === selectedStudentId;
-  });
-
-  if (!student) return;
-
-  const message =
-    document.getElementById("attendanceMessage");
-
-  student.came++;
-
-  message.className = "success";
-  message.textContent =
-    "✅ Bugun keldi deb belgilandi!";
-
-  updateDetails(student);
-  renderStudents();
-
-});
-absentButton.addEventListener("click", function() {
-
-  const student = students.find(function(item) {
-    return item.id === selectedStudentId;
-  });
-
-  if (!student) return;
-
-  const message =
-    document.getElementById("attendanceMessage");
-
-  student.absent++;
-
-  message.className = "error";
-  message.textContent =
-    "❌ Bugun kelmadi deb belgilandi!";
-
-  updateDetails(student);
-  renderStudents();
-
-});
-</script>
-
-</body>
-</html>
-  `);
-});
-
-
-const PORT =
-  process.env.PORT || 3000;
-
-
-app.listen(
-  PORT,
-  "0.0.0.0",
+payButton.addEventListener(
+  "click",
   function() {
 
-    console.log(
-      "StudentUZ server " +
-      PORT +
-      "-portda ishlayapti"
-    );
+    const student =
+      students.find(function(item) {
+
+        return item.id === selectedStudentId;
+
+      });
+
+
+    if (!student) return;
+
+
+    const amount =
+      Number(
+        document
+          .getElementById("paymentAmount")
+          .value
+      );
+
+
+    const message =
+      document.getElementById("paymentMessage");
+
+
+    const debt =
+      getDebt(student);
+
+
+    if (amount <= 0) {
+
+      message.className = "error";
+
+      message.textContent =
+        "❌ To‘lov summasini kiriting.";
+
+      return;
+
+    }
+
+
+    if (amount > debt) {
+
+      message.className = "error";
+
+      message.textContent =
+        "❌ Qarzdan ko‘p to‘lab bo‘lmaydi.";
+
+      return;
+
+    }
+
+
+    student.paid += amount;
+
+
+    document
+      .getElementById("paymentAmount")
+      .value = "";
+
+
+    message.className = "success";
+
+    message.textContent =
+      "✅ " +
+      amount.toLocaleString() +
+      " so‘m to‘landi!";
+
+
+    updateDetails(student);
+
+    renderStudents();
 
   }
 );
+
+
+// QARZ QO‘YISH
+
+debtButton.addEventListener(
+  "click",
+  function() {
+
+    const student =
+      students.find(function(item) {
+
+        return item.id === selectedStudentId;
+
+      });
+
+
+    if (!student) return;
+
+
+    const amount =
+      Number(
+        document
+          .getElementById("debtAmount")
+          .value
+      );
+
+
+    const message =
+      document.getElementById("debtMessage");
+
+
+    if (amount <= 0) {
+
+      message.className = "error";
+
+      message.textContent =
+        "❌ Qarz summasini kiriting.";
+
+      return;
+
+    }
+
+
+    student.extraDebt += amount;
+
+
+    document
+      .getElementById("debtAmount")
+      .value = "";
+
+
+    message.className = "success";
+
+    message.textContent =
+      "🔴 " +
+      amount.toLocaleString() +
+      " so‘m qarz qo‘yildi!";
+
+
+    updateDetails(student);
+
+    renderStudents();
+
+  }
+);
+
+
+// BUGUN KELDI
+
+cameButton.addEventListener(
+  "click",
+  function() {
+
+    const student =
+      students.find(function(item) {
+
+        return item.id === selectedStudentId;
+
+      });
+
+
+    if (!student) return;
+
+
+    const message =
+      document.getElementById("attendanceMessage");
+
+
+    student.came++;
+
+
+    message.className = "success";
+
+    message.textContent =
+      "✅ Bugun keldi deb belgilandi!";
+
+
+    updateDetails(student);
+
+    renderStudents();
+
+    renderCameList();
+
+  }
+);
+
+
+// BUGUN KELMADI
+
+absentButton.addEventListener(
+  "click",
+  function() {
+
+    const student =
+      students.find(function(item) {
+
+        return item.id === selectedStudentId;
+
+      });
+
+
+    if (!student) return;
+
+
+    const message =
+      document.getElementById("attendanceMessage");
+
+
+    student.absent++;
+
+
+    message.className = "error";
+
+    message.textContent =
+      "❌ Bugun kelmadi deb belgilandi!";
+
+
+    updateDetails(student);
+
+    renderStudents();
+
+  }
+);
+
+
+// OYLIK HISOBOT
+
+reportButton.addEventListener(
+  "click",
+  function() {
+
+    const result =
+      document.getElementById("reportResult");
+
+
+    if (students.length === 0) {
+
+      result.innerHTML =
+        "<p>Hozircha o‘quvchilar yo‘q.</p>";
+
+      return;
+
+    }
+
+
+    let totalPaid = 0;
+
+    let totalDebt = 0;
+
+    let totalCame = 0;
+
+    let totalAbsent = 0;
+
+
+    students.forEach(function(student) {
+
+      totalPaid += student.paid;
+
+      totalDebt += getDebt(student);
+
+      totalCame += student.came;
+
+      totalAbsent += student.absent;
+
+    });
+
+
+    let html = `
+
+      <div class="reportBox">
+
+        <div class="stat">
+          💰 Jami to‘langan
+          <strong>
+            ${totalPaid.toLocaleString()} so‘m
+          </strong>
+        </div>
+
+        <div class="stat">
+          🔴 Jami qarz
+          <strong>
+            ${totalDebt.toLocaleString()} so‘m
+          </strong>
+        </div>
+
+        <div class="stat">
+          ✅ Jami kelgan
+          <strong>
+            ${totalCame} kun
+          </strong>
+        </div>
+
+        <div class="stat">
+          ❌ Jami kelmagan
+          <strong>
+            ${totalAbsent} kun
+          </strong>
+        </div>
+
+      </div>
+
+      <hr>
+
+      <h3>👨‍🎓 O‘quvchilar bo‘yicha</h3>
+    `;
+
+
+    students.forEach(function(student) {
+
+      html += `
+
+        <div class="student">
+
+          <h3>👤 ${student.name}</h3>
+
+          <p>
+            💰 To‘lagan:
+            <strong class="paid">
+              ${student.paid.toLocaleStr
