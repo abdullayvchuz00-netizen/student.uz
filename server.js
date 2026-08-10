@@ -268,7 +268,9 @@ button {
   <button id="enterButton">
     KIRISH
   </button>
-
+  <div class="welcomeLogo">
+  <img src="StudentUZ_logo__transparent.png" alt="StudentUZ">
+</div>
 </div>
 
 <header>
