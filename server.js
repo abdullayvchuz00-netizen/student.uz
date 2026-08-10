@@ -13,14 +13,17 @@ app.get("/", (req, res) => {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <meta name="google-site-verification" content="axKJ6XqePH6qiQF1-tTx9JFuHb6q4cmrYdz1WJ32jgM">
-
-  <title>StudentUZ</title>
+  <meta
+    name="google-site-verification"
+    content="axKJ6XqePH6qiQF1-tTx9JFuHb6q4cmrYdz1WJ32jgM"
+  >
 
   <meta
     name="description"
-    content="StudentUZ — o‘quvchilar uchun zamonaviy platforma"
-  />
+    content="StudentUZ — o'quvchilar uchun zamonaviy platforma"
+  >
+
+  <title>StudentUZ</title>
 
   <style>
     * {
@@ -41,6 +44,15 @@ app.get("/", (req, res) => {
       text-align: center;
     }
 
+    header h1 {
+      margin: 0 0 8px;
+    }
+
+    header p {
+      margin: 0;
+      color: white;
+    }
+
     main {
       max-width: 900px;
       margin: 40px auto;
@@ -49,17 +61,17 @@ app.get("/", (req, res) => {
 
     .card {
       background: white;
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+      padding: 35px;
+      border-radius: 16px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
       text-align: center;
     }
 
-    h1 {
-      margin-bottom: 10px;
+    .card h2 {
+      margin-top: 0;
     }
 
-    p {
+    .card p {
       color: #555;
       font-size: 17px;
     }
@@ -73,6 +85,13 @@ app.get("/", (req, res) => {
       border-radius: 20px;
       font-weight: bold;
     }
+
+    .info {
+      margin-top: 30px;
+      padding: 20px;
+      background: #f8fafc;
+      border-radius: 12px;
+    }
   </style>
 </head>
 
@@ -80,6 +99,13 @@ app.get("/", (req, res) => {
 
   <header>
     <h1>StudentUZ</h1>
-    <p style="color:white;">
-      O‘quvchilar uchun platforma
-    </p>
+    <p>O'quvchilar uchun platforma</p>
+  </header>
+
+  <main>
+    <div class="card">
+
+      <h2>Xush kelibsiz! 👋</h2>
+
+      <p>
+        StudentUZ platform
