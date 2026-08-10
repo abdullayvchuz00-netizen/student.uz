@@ -9,23 +9,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.use(express.static("public"));
+
 app.get("/", (req, res) => {
-  res.send(`
-    <!DOCTYPE html>
-    <html lang="uz">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="google-site-verification" content="axKJ6XqePH6qiQF1-tTx9JFuHb6q4cmrYdz1WJ32jgM" />
-        <title>StudentUZ</title>
-        <meta name="description" content="StudentUZ o'quvchilar uchun platforma">
-      </head>
-      <body>
-        <h1>StudentUZ</h1>
-        <p>StudentUZ server ishlayapti</p>
-      </body>
-    </html>
-  `);
+  res.sendFile("index.html", { root: "public" });
 });
 
 app.use("/api/sms", smsRouter);
