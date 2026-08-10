@@ -855,7 +855,125 @@ absentButton.addEventListener("click", function() {
 </script>  </body>  
 </html>  
   `);  
-});  const PORT =
+  
+}); 
+app.get("/reports", (req, res) => {
+res.send(`
+
+<!DOCTYPE html><html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>StudentUZ - Hisobotlar</title><style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+header {
+  background: #2563eb;
+  color: white;
+  padding: 25px;
+  text-align: center;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 25px auto;
+  padding: 15px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0,0,0,.08);
+}
+
+.back {
+  background: #e2e8f0;
+  color: #0f172a;
+  border: 0;
+  padding: 12px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.reports {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 15px;
+}
+
+.report {
+  padding: 22px;
+  border-radius: 16px;
+  color: white;
+}
+
+.report h2 {
+  margin-top: 0;
+}
+
+.students {
+  background: #2563eb;
+}
+
+.payments {
+  background: #16a34a;
+}
+
+.debts {
+  background: #dc2626;
+}
+
+.attendance {
+  background: #7c3aed;
+}
+
+.number {
+  font-size: 28px;
+  font-weight: bold;
+}
+</style></head><body><header>
+  <h1>📊 Hisobotlar</h1>
+  <p>StudentUZ oylik hisobotlari</p>
+</header><div class="container">  <div class="card">
+    <button class="back" onclick="location.href='/'">
+      ← Bosh sahifaga
+    </button>
+  </div>  <div class="reports"><div class="report students">
+  <h2>👨‍🎓 O‘quvchilar</h2>
+  <div class="number">0 ta</div>
+</div>
+
+<div class="report payments">
+  <h2>💰 To‘lovlar</h2>
+  <div class="number">0 so‘m</div>
+</div>
+
+<div class="report debts">
+  <h2>🔴 Qarzlar</h2>
+  <div class="number">0 so‘m</div>
+</div>
+
+<div class="report attendance">
+  <h2>📅 Davomat</h2>
+  <div class="number">0 kun</div>
+</div>
+
+  </div></div></body>
+</html>
+  `);
+});
+const PORT =
 process.env.PORT || 3000;
 
 app.listen(
