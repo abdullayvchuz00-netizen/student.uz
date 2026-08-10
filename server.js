@@ -142,7 +142,139 @@ button {
 .hidden {  
   display: none;  
 }  
-</style>  </head>  <body>  <header>  
+#welcomeScreen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  color: white;
+  text-align: center;
+}
+
+.welcomeLogo {
+  font-size: 70px;
+  animation: logoShow 1s ease;
+}
+
+#welcomeScreen h1 {
+  margin: 10px 0 5px;
+  font-size: 42px;
+  animation: textShow 1s ease;
+}
+
+.logoLine {
+  width: 0;
+  height: 4px;
+  background: white;
+  border-radius: 10px;
+
+  animation: lineShow 1.2s ease forwards;
+  animation-delay: .7s;
+}
+
+#welcomeScreen p {
+  opacity: 0;
+  animation: textShow 1s ease forwards;
+  animation-delay: 1s;
+}
+
+#enterButton {
+  margin-top: 20px;
+  padding: 14px 40px;
+
+  border: 0;
+  border-radius: 12px;
+
+  background: white;
+  color: #2563eb;
+
+  font-size: 17px;
+  font-weight: bold;
+
+  cursor: pointer;
+
+  opacity: 0;
+  animation: buttonShow 1s ease forwards;
+  animation-delay: 1.5s;
+}
+
+#enterButton:hover {
+  transform: scale(1.05);
+}
+
+@keyframes logoShow {
+  from {
+    opacity: 0;
+    transform: scale(.5);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes textShow {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes lineShow {
+  from {
+    width: 0;
+  }
+
+  to {
+    width: 180px;
+  }
+}
+
+@keyframes buttonShow {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>  </head>  <body> <body>
+
+<div id="welcomeScreen">
+
+  <div class="welcomeLogo">
+    🎓
+  </div>
+
+  <h1>StudentUZ</h1>
+
+  <div class="logoLine"></div>
+
+  <p>O‘quvchilar platformasi</p>
+
+  <button id="enterButton">
+    KIRISH
+  </button>
+
+</div>
+
+<header>
+  <h1>🎓 StudentUZ</h1> <header>  
   <h1>🎓 Student.uz</h1>  
   <p>O‘quvchilar uchun platforma</p>  
 </header>  <div class="container">    <div id="dashboard">  <div class="card">  
@@ -853,6 +985,17 @@ absentButton.addEventListener("click", function() {
   renderStudents();  
   
 });  
+document.getElementById("enterButton").addEventListener("click", function() {
+
+  const welcome = document.getElementById("welcomeScreen");
+
+  welcome.style.opacity = "0";
+
+  setTimeout(function() {
+    welcome.style.display = "none";
+  }, 500);
+
+});
 </script>  </body>  
 </html>  
   `);  
