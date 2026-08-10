@@ -257,9 +257,7 @@ button {
 
 <div id="welcomeScreen">
 
-  <div class="welcomeLogo">
-  <img src="StudentUZ_logo__transparent.png" alt="StudentUZ">
-</div>
+  
 
   <h1>StudentUZ</h1>
 
