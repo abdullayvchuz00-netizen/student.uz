@@ -253,6 +253,26 @@ button {
     transform: translateY(0);
   }
 }
+.container {
+  color: #0f172a;
+}
+
+.card {
+  color: #0f172a;
+}
+
+.student {
+  color: #0f172a;
+}
+
+.student h3,
+.student p {
+  color: #0f172a;
+}
+
+#dashboard h2 {
+  color: #0f172a;
+}
 </style>  </head>  <body> <body>
 
 <div id="welcomeScreen">
