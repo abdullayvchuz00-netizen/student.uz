@@ -3,6 +3,28 @@ const express = require("express");
 const app = express();
 
 let students = [];
+function getReports() {
+  const totalStudents = students.length;
+
+  const totalPayments = students.reduce((sum, student) => {
+    return sum + (student.paid || 0);
+  }, 0);
+
+  const totalDebts = students.reduce((sum, student) => {
+    return sum + Math.max((student.fee || 0) - (student.paid || 0), 0);
+  }, 0);
+
+  const totalAttendance = students.reduce((sum, student) => {
+    return sum + (student.came || 0);
+  }, 0);
+
+  return {
+    totalStudents,
+    totalPayments,
+    totalDebts,
+    totalAttendance
+  };
+}
 
 app.get("/", (req, res) => {
 res.send(`
@@ -1021,7 +1043,9 @@ document.getElementById("enterButton").addEventListener("click", function() {
   `);  
   
 }); 
-app.get("/reports", (req, res) => {
+app.get("/reports", (req, res)=> {
+  const report = getReports();
+
 res.send(`
 
 <!DOCTYPE html><html lang="uz">
@@ -1115,23 +1139,19 @@ header {
     </button>
   </div>  <div class="reports"><div class="report students">
   <h2>👨‍🎓 O‘quvchilar</h2>
-  <div class="number">0 ta</div>
-</div>
+  <div class="number">${report.totalStudents} ta</div>
 
 <div class="report payments">
   <h2>💰 To‘lovlar</h2>
-  <div class="number">0 so‘m</div>
-</div>
+  <div class="number">${report.totalPayments.toLocaleString()} so‘m</div>
 
 <div class="report debts">
   <h2>🔴 Qarzlar</h2>
-  <div class="number">0 so‘m</div>
-</div>
+  <div class="number">${report.totalDebts.toLocaleString()} so‘m</div>
 
 <div class="report attendance">
   <h2>📅 Davomat</h2>
-  <div class="number">0 kun</div>
-</div>
+  <div class="number">${report.totalAttendance} kun</div>
 
   </div></div></body>
 </html>
