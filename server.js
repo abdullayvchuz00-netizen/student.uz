@@ -1140,20 +1140,20 @@ header {
   </div>  <div class="reports"><div class="report students">
   <h2>👨‍🎓 O‘quvchilar</h2>
   <div class="number">${report.totalStudents} ta</div>
-
+</div>
 <div class="report payments">
   <h2>💰 To‘lovlar</h2>
   <div class="number">${report.totalPayments.toLocaleString()} so‘m</div>
-
+</div>
 <div class="report debts">
   <h2>🔴 Qarzlar</h2>
   <div class="number">${report.totalDebts.toLocaleString()} so‘m</div>
-
+</div>
 <div class="report attendance">
   <h2>📅 Davomat</h2>
   <div class="number">${report.totalAttendance} kun</div>
 
-  </div></div></body>
+  </div> </div></body>
 </html>
   `);
 });
