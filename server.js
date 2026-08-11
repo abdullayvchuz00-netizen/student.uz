@@ -285,7 +285,7 @@ button {
 
   <div class="logoLine"></div>
 
-  <p>O‘quvchilar platformasi</p>
+  <p>MASHRAPOV loyihasi</p>
 
   <button id="enterButton">
     KIRISH
@@ -294,9 +294,9 @@ button {
 </div>
 
 <header>
-  <h1>🎓 StudentUZ</h1> <header>  
+  <header>  
   <h1>🎓 Student.uz</h1>  
-  <p>O‘quvchilar uchun platforma</p>  
+  <p>O‘quvchilar platformasi</p>  
 </header>  <div class="container">    <div id="dashboard">  <div class="card">  
 
   <h2>➕ O‘quvchi qo‘shish</h2>  
