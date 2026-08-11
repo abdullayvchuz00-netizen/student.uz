@@ -1153,7 +1153,7 @@ header {
   <h2>📅 Davomat</h2>
   <div class="number">${report.totalAttendance} kun</div>
 
-  </div> </div></body>
+ </div> </div> </div></body>
 </html>
   `);
 });
