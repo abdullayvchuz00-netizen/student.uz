@@ -357,7 +357,7 @@ button {
   </div>    <div id="details" class="hidden">  <div class="card">  
 
   <button id="backButton" class="back">  
-    ← Bosh sahifaga qaytish  
+    ← Bosh sahifaga chiqish
   </button>  
 
   <h2 id="detailName"></h2>  
@@ -1134,9 +1134,9 @@ header {
   <h1>📊 Hisobotlar</h1>
   <p>StudentUZ oylik hisobotlari</p>
 </header><div class="container">  <div class="card">
-    <button id="backButton" class="back">  
-    ← Bosh sahifaga qaytish  
-  </button>  
+    <button class="back" onclick="location.href='/'">
+      ← Bosh sahifaga
+    </button>
   </div>  <div class="reports"><div class="report students">
   <h2>👨‍🎓 O‘quvchilar</h2>
   <div class="number">${report.totalStudents} ta</div>
@@ -1153,7 +1153,7 @@ header {
   <h2>📅 Davomat</h2>
   <div class="number">${report.totalAttendance} kun</div>
 
- </div> </div> </div></body>
+  </div> </div></body>
 </html>
   `);
 });
